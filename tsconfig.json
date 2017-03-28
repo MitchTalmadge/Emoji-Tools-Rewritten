@@ -28,7 +28,6 @@
     "**/*.shim.ts"
   ],
   "angularCompilerOptions": {
-    "skipMetadataEmit": true,
-    "entryModule": "src/scripts/app.module#AppModule"
+    "skipMetadataEmit": true
   }
 }

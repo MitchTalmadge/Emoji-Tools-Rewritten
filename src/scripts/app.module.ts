@@ -34,10 +34,8 @@ import {VendorModule} from "./vendors/vendors.module";
         VendorModule,
         //routes
     ],
-    declarations: [
-    ],
-    providers: [
-    ],
+    declarations: [],
+    providers: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {

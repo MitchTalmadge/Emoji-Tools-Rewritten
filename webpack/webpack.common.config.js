@@ -23,18 +23,13 @@ var config = {
     cache: true,
 
     entry: {
-        polyfills: path.join(__dirname, '../src/scripts/polyfills'),
-        vendor: path.join(__dirname, '../src/scripts/vendors/vendors'),
-        main: path.join(__dirname, '../src/scripts/main')
+        polyfills: path.join(__dirname, '../src/scripts/polyfills.ts'),
+        vendor: path.join(__dirname, '../src/scripts/vendors/vendors.ts'),
+        main: path.join(__dirname, '../src/scripts/main.ts')
     },
 
     module: {
         rules: [
-            {
-                test: /\.ts$/,
-                use: ['awesome-typescript-loader', 'angular2-template-loader'],
-                exclude: [/\.(spec|e2e)\.ts$/]
-            },
             {
                 test: /\.(component|page)\.html$/,
                 use: ["to-string-loader", "html-loader?-minimize"]

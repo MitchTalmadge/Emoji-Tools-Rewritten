@@ -49,30 +49,16 @@ config.plugins.push(
     })
 );
 
-// workaround https://github.com/angular/angular-cli/issues/5329
-var aotPlugin = new AotPlugin({
-    tsConfigPath: path.join(__dirname, '../tsconfig.json')
-});
-aotPlugin._compilerHost._resolve = function(path_to_resolve) {
-    path_1 = require("path");
-    path_to_resolve = aotPlugin._compilerHost._normalizePath(path_to_resolve);
-    if (path_to_resolve[0] == '.') {
-        return aotPlugin._compilerHost._normalizePath(path_1.join(aotPlugin._compilerHost.getCurrentDirectory(), path_to_resolve));
-    }
-    else if (path_to_resolve[0] == '/' || path_to_resolve.match(/^\w:\//)) {
-        return path_to_resolve;
-    }
-    else {
-        return aotPlugin._compilerHost._normalizePath(path_1.join(aotPlugin._compilerHost._basePath, path_to_resolve));
-    }
-};
+config.plugins.push(
+    new AotPlugin({
+        tsConfigPath: path.join(__dirname, '../tsconfig.json'),
+        entryModule: path.join(__dirname, "../src/scripts/app.module#AppModule")
+    })
+);
 
 config.plugins.push(
-    /*new AotPlugin({
-        tsConfigPath: path.join(__dirname, '../tsconfig.json')
-    })*/
-    aotPlugin
-);
+    new CleanWebpackPlugin(['tmp'], {root: path.join(__dirname, "../")})
+)
 
 config.devtool = 'source-map';
 config.output = {
