@@ -16,18 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const {app, BrowserWindow, Menu} = require('electron');
+import { Component, OnInit } from '@angular/core';
 
-app.on('ready', function () {
-    let mainWindow = new BrowserWindow({
-        width: 1200,
-        height: 800,
-        title: 'Emoji Tools',
-        titleBarStyle: 'hidden',
-        resizable: true,
-        fullscreenable: true,
-        frame: false
-    });
-    //Menu.setApplicationMenu(null);
-    mainWindow.loadURL('file://' + __dirname + '/tmp/index.html');
-});
+@Component({
+    selector: 'et-title-bar',
+    templateUrl: 'title-bar.component.html',
+    styleUrls: ['title-bar.component.css']
+})
+export class TitleBarComponent implements OnInit {
+    constructor() { }
+
+    ngOnInit() { }
+
+    onMinimize() {
+
+    }
+
+    onMaximize() {
+    }
+
+    onClose() {
+        window.close();
+    }
+
+}

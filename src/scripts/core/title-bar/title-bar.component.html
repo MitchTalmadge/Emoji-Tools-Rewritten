@@ -16,6 +16,18 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<et-title-bar></et-title-bar>
+<div id="title-bar">
+    <h1>Emoji Tools</h1>
 
-Hello!
+    <div class="uk-float-right">
+        <div class="title-bar-button" id="minimize" (click)="onMinimize()">
+            -
+        </div>
+        <div class="title-bar-button" id="maximize" (click)="onMaximize()">
+            +
+        </div>
+        <div class="title-bar-button" id="close" (click)="onClose()">
+            X
+        </div>
+    </div>
+</div>

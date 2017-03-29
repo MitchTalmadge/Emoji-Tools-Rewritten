@@ -16,15 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NgModule, Optional, SkipSelf, ErrorHandler} from "@angular/core";
+import {ErrorHandler, NgModule, Optional, SkipSelf} from "@angular/core";
 import {RESTService} from "./services/rest.service";
 import {AppComponent} from "./app/app.component";
 import {EmojiToolsErrorHandler} from "./error-handler";
+import {TitleBarComponent} from "./title-bar/title-bar.component";
 
 @NgModule({
     imports: [],
-    declarations: [AppComponent],
-    exports: [AppComponent],
+    declarations: [
+        AppComponent,
+        TitleBarComponent
+    ],
+    exports: [
+        AppComponent,
+        TitleBarComponent
+    ],
     providers: [
         {
             provide: ErrorHandler,
@@ -36,7 +43,7 @@ import {EmojiToolsErrorHandler} from "./error-handler";
 export class CoreModule {
 
     constructor(@Optional() @SkipSelf() otherCoreModule: CoreModule) {
-        if(otherCoreModule) {
+        if (otherCoreModule) {
             throw new Error("The Core Module was imported twice. It can only be imported once (in the root module)");
         }
     }
