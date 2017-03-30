@@ -20,14 +20,17 @@ import { NgModule } from '@angular/core';
 
 import { WelcomeComponent } from './welcome.component';
 import {ProjectsComponent} from "./projects/projects.component";
+import {NewProjectComponent} from "./new-project/new-project.component";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
     imports: [
-
+        CommonModule
     ],
     declarations: [
         WelcomeComponent,
-        ProjectsComponent
+        ProjectsComponent,
+        NewProjectComponent
     ],
     exports: [
         WelcomeComponent

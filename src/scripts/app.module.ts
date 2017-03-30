@@ -24,20 +24,28 @@ import {CoreModule} from "./core/core.module";
 import {AppComponent} from "./core/app/app.component";
 import {VendorModule} from "./vendors/vendors.module";
 import {FeaturesModule} from "./features/features.module";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
     imports: [
         BrowserModule,
         FormsModule,
+        CommonModule,
         ReactiveFormsModule,
         HttpModule,
         CoreModule,
         VendorModule,
         FeaturesModule
     ],
-    declarations: [],
-    providers: [],
-    bootstrap: [AppComponent]
+    declarations: [
+
+    ],
+    providers: [
+
+    ],
+    bootstrap: [
+        AppComponent
+    ]
 })
 export class AppModule {
 }

@@ -24,18 +24,24 @@ app.on('ready', function () {
         width: 1200,
         height: 800,
         title: 'Emoji Tools',
+        icon: __dirname + '/src/resources/images/favicon.ico',
         titleBarStyle: 'hidden',
         resizable: true,
         fullscreenable: true,
-        frame: true
+        frame: true,
+        autoHideMenuBar: true
     });
-    //Menu.setApplicationMenu(null);
 
     switch (NODE_ENV) {
         case 'prod':
             mainWindow.loadURL('file://' + __dirname + '/dist/index.html');
+
+            // Disable Menu Bar
+            Menu.setApplicationMenu(null);
             break;
         case 'dev':
+
+
             mainWindow.loadURL('http://localhost:9000/');
             break;
     }

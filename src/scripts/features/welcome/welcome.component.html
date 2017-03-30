@@ -16,11 +16,18 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="uk-grid">
-    <div class="uk-column-1-2">
-        <img id="logo" src="../../../resources/images/logo-wide.svg"/>
-    </div>
+<div class="uk-container">
 
-    <et-projects (openProject)="onOpenProject($event)">
-    </et-projects>
+    <img id="logo" class="uk-align-center" src="../../../resources/images/logo-wide.png"/>
+
+    <div class="uk-grid">
+        <div id="projects-column" class="uk-width-2-5">
+            <et-projects (openProject)="onOpenProject($event)">
+            </et-projects>
+        </div>
+        <div class="uk-width-3-5">
+            <et-new-project>
+            </et-new-project>
+        </div>
+    </div>
 </div>

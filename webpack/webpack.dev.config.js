@@ -41,7 +41,6 @@ config.devServer = {
 config.plugins.push(
     new HtmlWebpackPlugin({
         template: path.join(__dirname, '../src/index.html.ejs'),
-        favicon: path.join(__dirname, '../src/resources/favicons/favicon.ico'),
         filename: path.join(__dirname, '../tmp/index.html'),
         inject: 'body',
         minify: {

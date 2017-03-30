@@ -17,7 +17,7 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {Project} from "../../models/project.model";
+import {ETProject} from "../../models/project.model";
 
 @Component({
     selector: 'et-welcome',
@@ -35,7 +35,7 @@ export class WelcomeComponent implements OnInit {
      * Called when a user selects a project to open.
      * @param project The project to open.
      */
-    onOpenProject(project: Project) {
+    onOpenProject(project: ETProject) {
 
     }
 

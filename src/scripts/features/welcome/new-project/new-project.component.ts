@@ -16,25 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Moment} from "moment/moment";
+import { Component, OnInit } from '@angular/core';
 
-export interface ETProject {
+@Component({
+    selector: 'et-new-project',
+    templateUrl: 'new-project.component.html',
+    styleUrls: ['new-project.component.css']
+})
+export class NewProjectComponent implements OnInit {
+    constructor() { }
 
-    id?: number,
-
-    name?: string,
-
-    platform?: ETPlatform,
-
-    lastModified?: Moment
-
-    //TODO: ETProject Model (ETProject Directory?)
-
-}
-
-export enum ETPlatform {
-
-    ANDROID,
-    APPLE
+    ngOnInit() { }
 
 }

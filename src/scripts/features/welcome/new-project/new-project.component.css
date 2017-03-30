@@ -16,25 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Moment} from "moment/moment";
-
-export interface ETProject {
-
-    id?: number,
-
-    name?: string,
-
-    platform?: ETPlatform,
-
-    lastModified?: Moment
-
-    //TODO: ETProject Model (ETProject Directory?)
-
+.platform {
+    color: #bbbbbb;
+    font-size: 100px;
+    background-color: #fff;
+    border: 1px dashed #ddd;
 }
 
-export enum ETPlatform {
-
-    ANDROID,
-    APPLE
-
+.platform:hover {
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: 1px solid #f1f1f1;
+    color: #666;
 }

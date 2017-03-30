@@ -35,7 +35,6 @@ config.module.rules.unshift(
 config.plugins.push(
     new HtmlWebpackPlugin({
         template: path.join(__dirname, '../src/index.html.ejs'),
-        favicon: path.join(__dirname, '../src/resources/favicons/favicon.ico'),
         filename: path.join(__dirname, '../dist/index.html'),
         inject: 'body',
         minify: {
