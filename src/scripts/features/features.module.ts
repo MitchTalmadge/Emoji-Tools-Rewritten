@@ -16,32 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#title-bar {
-    width: 100%;
-    height: 30px;
-    background-color: #ddd;
-}
+import {NgModule} from "@angular/core";
+import {WelcomeModule} from "./welcome/welcome.module";
 
-#title-bar h1 {
-    font-size: 14px;
-    margin: 0 0 0 20px;
-    display: inline-block;
-}
-
-#title-bar .title-bar-button {
-    height: 30px;
-    width: 40px;
-    background-color: transparent;
-    line-height: 30px;
-    text-align: center;
-    display: inline-block;
-}
-
-#title-bar .title-bar-button:hover {
-    background-color: #eee;
-    cursor: default;
-}
-
-#title-bar #close:hover {
-    background-color: #f0506e;
+/**
+ * A module combining the features of the application.
+ */
+@NgModule({
+    imports: [WelcomeModule],
+    exports: [WelcomeModule],
+    declarations: [],
+    providers: [],
+})
+export class FeaturesModule {
 }

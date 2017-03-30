@@ -6,8 +6,9 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --config webpack/webpack.dev.config.js && electron .",
-    "build": "webpack --config webpack/webpack.production.config.js -p"
+    "dev-watch": "cross-env NODE_ENV=dev webpack-dev-server --config webpack/webpack.dev.config.js",
+    "dev-electron": "cross-env NODE_ENV=dev electron .",
+    "build": "cross-env NODE_ENV=prod webpack --config webpack/webpack.production.config.js -p"
   },
   "license": "GPL-3",
   "dependencies": {
@@ -40,6 +41,7 @@
     "awesome-typescript-loader": "^3.1.2",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.27.3",
+    "cross-env": "^3.2.4",
     "electron-packager": "^8.6.0",
     "file-loader": "^0.10.1",
     "html-loader": "^0.4.5",
@@ -63,6 +65,7 @@
     "typescript-collections": "^1.2.3",
     "url-loader": "^0.5.8",
     "webpack": "^2.3.2",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "webpack-dev-server": "^2.4.2"
   }
 }

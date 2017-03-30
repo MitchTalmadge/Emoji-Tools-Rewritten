@@ -20,6 +20,8 @@ var path = require('path');
 var webpack = require('webpack');
 
 var config = {
+    target: 'electron-renderer',
+
     cache: true,
 
     entry: {

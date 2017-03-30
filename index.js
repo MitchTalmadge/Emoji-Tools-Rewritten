@@ -17,6 +17,7 @@
  */
 
 const {app, BrowserWindow, Menu} = require('electron');
+const NODE_ENV = process.env.NODE_ENV;
 
 app.on('ready', function () {
     let mainWindow = new BrowserWindow({
@@ -26,8 +27,16 @@ app.on('ready', function () {
         titleBarStyle: 'hidden',
         resizable: true,
         fullscreenable: true,
-        frame: false
+        frame: true
     });
     //Menu.setApplicationMenu(null);
-    mainWindow.loadURL('file://' + __dirname + '/tmp/index.html');
+
+    switch (NODE_ENV) {
+        case 'prod':
+            mainWindow.loadURL('file://' + __dirname + '/dist/index.html');
+            break;
+        case 'dev':
+            mainWindow.loadURL('http://localhost:9000/');
+            break;
+    }
 });

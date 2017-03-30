@@ -17,27 +17,23 @@
  */
 
 import {NgModule} from "@angular/core";
-import {BrowserModule} from "@angular/platform-browser";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpModule} from "@angular/http";
-import {CoreModule} from "./core/core.module";
-import {AppComponent} from "./core/app/app.component";
-import {VendorModule} from "./vendors/vendors.module";
-import {FeaturesModule} from "./features/features.module";
+import {RouterModule, Routes} from "@angular/router";
+import {WelcomeComponent} from "../features/welcome/welcome.component";
+
+const routes: Routes = [
+    {
+        path: '',
+        component: WelcomeComponent
+    },
+    {
+        path: '*',
+        redirectTo: ''
+    }
+];
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpModule,
-        CoreModule,
-        VendorModule,
-        FeaturesModule
-    ],
-    declarations: [],
-    providers: [],
-    bootstrap: [AppComponent]
+    imports: [RouterModule.forRoot(routes)],
+    exports: [RouterModule],
 })
-export class AppModule {
+export class RoutingModule {
 }

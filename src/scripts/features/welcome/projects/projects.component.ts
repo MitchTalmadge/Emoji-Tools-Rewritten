@@ -16,28 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NgModule} from "@angular/core";
-import {BrowserModule} from "@angular/platform-browser";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpModule} from "@angular/http";
-import {CoreModule} from "./core/core.module";
-import {AppComponent} from "./core/app/app.component";
-import {VendorModule} from "./vendors/vendors.module";
-import {FeaturesModule} from "./features/features.module";
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Project} from "../../../models/project.model";
 
-@NgModule({
-    imports: [
-        BrowserModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpModule,
-        CoreModule,
-        VendorModule,
-        FeaturesModule
-    ],
-    declarations: [],
-    providers: [],
-    bootstrap: [AppComponent]
+@Component({
+    selector: 'et-projects',
+    templateUrl: 'projects.component.html',
+    styleUrls: ['projects.component.css']
 })
-export class AppModule {
+export class ProjectsComponent implements OnInit {
+
+    @Output() openProject = new EventEmitter<Project>();
+
+    constructor() { }
+
+    ngOnInit() { }
+
 }

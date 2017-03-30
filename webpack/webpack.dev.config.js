@@ -16,21 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('./webpack.common.config.js');
-var AotPlugin = require('@ngtools/webpack').AotPlugin;
-var CleanWebpackPlugin = require('clean-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-
-var path = require('path');
+const config = require('./webpack.common.config.js');
+const AotPlugin = require('@ngtools/webpack').AotPlugin;
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
 config.module.rules.unshift(
     {
         test: /\.ts$/,
-        use: '@ngtools/webpack',
-        //use: ['awesome-typescript-loader', 'angular2-template-loader'],
+        //use: '@ngtools/webpack',
+        use: ['awesome-typescript-loader', 'angular2-template-loader'],
         exclude: [/\.(spec|e2e)\.ts$/]
     }
 );
+
+config.devServer = {
+    contentBase: path.join(__dirname, "../tmp/"),
+    historyApiFallback: true,
+    compress: true,
+    port: 9000
+};
 
 config.plugins.push(
     new HtmlWebpackPlugin({
@@ -45,20 +51,21 @@ config.plugins.push(
             collapseWhitespace: true,
             collapseInlineTagWhitespace: true
         },
-        chunksSortMode: 'dependency'
+        chunksSortMode: 'dependency',
+        dev: true
     })
 );
 
-config.plugins.push(
+/*config.plugins.push(
     new AotPlugin({
         tsConfigPath: path.join(__dirname, '../tsconfig.json'),
         entryModule: path.join(__dirname, "../src/scripts/app.module#AppModule")
     })
-);
+);*/
 
 config.plugins.push(
     new CleanWebpackPlugin(['tmp'], {root: path.join(__dirname, "../")})
-)
+);
 
 config.devtool = 'source-map';
 config.output = {

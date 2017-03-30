@@ -16,28 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NgModule} from "@angular/core";
-import {BrowserModule} from "@angular/platform-browser";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpModule} from "@angular/http";
-import {CoreModule} from "./core/core.module";
-import {AppComponent} from "./core/app/app.component";
-import {VendorModule} from "./vendors/vendors.module";
-import {FeaturesModule} from "./features/features.module";
+#footer {
+    background-color: #eee;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+}
 
-@NgModule({
-    imports: [
-        BrowserModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpModule,
-        CoreModule,
-        VendorModule,
-        FeaturesModule
-    ],
-    declarations: [],
-    providers: [],
-    bootstrap: [AppComponent]
-})
-export class AppModule {
+#copyright {
+    padding-left: 20px;
+}
+
+#donate {
+    padding-right: 20px;
 }

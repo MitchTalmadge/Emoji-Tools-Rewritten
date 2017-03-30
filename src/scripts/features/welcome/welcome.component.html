@@ -16,18 +16,11 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div id="title-bar">
-    <h1>Emoji Tools</h1>
-
-    <div class="uk-float-right">
-        <div class="title-bar-button" id="minimize" (click)="onMinimize()">
-            -
-        </div>
-        <div class="title-bar-button" id="maximize" (click)="onMaximize()">
-            +
-        </div>
-        <div class="title-bar-button" id="close" (click)="onClose()">
-            X
-        </div>
+<div class="uk-grid">
+    <div class="uk-column-1-2">
+        <img id="logo" src="../../../resources/images/logo-wide.svg"/>
     </div>
+
+    <et-projects (openProject)="onOpenProject($event)">
+    </et-projects>
 </div>

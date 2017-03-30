@@ -16,27 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Project} from "../../models/project.model";
 
 @Component({
-    selector: 'et-title-bar',
-    templateUrl: 'title-bar.component.html',
-    styleUrls: ['title-bar.component.css']
+    selector: 'et-welcome',
+    templateUrl: 'welcome.component.html',
+    styleUrls: ['welcome.component.css']
 })
-export class TitleBarComponent implements OnInit {
-    constructor() { }
-
-    ngOnInit() { }
-
-    onMinimize() {
-
+export class WelcomeComponent implements OnInit {
+    constructor() {
     }
 
-    onMaximize() {
+    ngOnInit() {
     }
 
-    onClose() {
-        window.close();
+    /**
+     * Called when a user selects a project to open.
+     * @param project The project to open.
+     */
+    onOpenProject(project: Project) {
+
     }
 
 }

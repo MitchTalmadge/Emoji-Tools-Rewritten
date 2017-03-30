@@ -16,28 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NgModule} from "@angular/core";
-import {BrowserModule} from "@angular/platform-browser";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpModule} from "@angular/http";
-import {CoreModule} from "./core/core.module";
-import {AppComponent} from "./core/app/app.component";
-import {VendorModule} from "./vendors/vendors.module";
-import {FeaturesModule} from "./features/features.module";
+import {Component, OnInit} from "@angular/core";
+const {remote} = require('electron');
 
-@NgModule({
-    imports: [
-        BrowserModule,
-        FormsModule,
-        ReactiveFormsModule,
-        HttpModule,
-        CoreModule,
-        VendorModule,
-        FeaturesModule
-    ],
-    declarations: [],
-    providers: [],
-    bootstrap: [AppComponent]
+@Component({
+    selector: 'et-footer',
+    templateUrl: 'footer.component.html',
+    styleUrls: ['footer.component.css']
 })
-export class AppModule {
+export class FooterComponent implements OnInit {
+    constructor() {
+    }
+
+    ngOnInit() {
+    }
+
+    onClickCopyrightName() {
+        //TODO: Open url in default browser.
+    }
+
+    onClickDonate() {
+        //TODO: Open donate url
+    }
+
 }
