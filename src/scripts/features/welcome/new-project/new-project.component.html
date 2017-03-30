@@ -16,20 +16,44 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div id="new-project" class="uk-card uk-card-default uk-card-body">
-    <h2 class="uk-card-title">Start a New Project</h2>
-    <p>Select a Platform to Get Started!</p>
-    <hr/>
-    <div class="uk-grid">
-        <div class="uk-width-1-2 uk-text-center">
-            <div class="platform uk-section uk-padding-small">
-                <i class="fa fa-android"></i>
+<div id="new-project" class="uk-card uk-card-default">
+    <div class="uk-card-body">
+        <h2 class="uk-card-title">Start a New Project</h2>
+        <div *ngIf="newProject.platform == null">
+            <p>Select Your Platform to Get Started!</p>
+            <hr/>
+            <div class="uk-grid">
+                <div class="uk-width-1-2 uk-text-center">
+                    <div class="platform uk-section uk-padding-small" (click)="onClickPlatform(ANDROID)">
+                        <i class="fa fa-android"></i>
+                    </div>
+                </div>
+                <div class="uk-width-1-2 uk-text-center">
+                    <div class="platform uk-section uk-padding-small" (click)="onClickPlatform(APPLE)">
+                        <i class="fa fa-apple"></i>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="uk-width-1-2 uk-text-center">
-            <div class="platform uk-section uk-padding-small">
-                <i class="fa fa-apple"></i>
+        <div *ngIf="newProject.platform != null">
+            <div class="uk-card-badge" style="font-size: 18px">
+                <i class="fa"
+                   [class.fa-android]="newProject.platform === ANDROID"
+                   [class.fa-apple]="newProject.platform === APPLE">
+                </i>
+                {{newProject.platform === ANDROID ? 'Android' : 'Apple'}}
             </div>
+            <p>Great! Give Your Project a Name.</p>
+            <hr/>
+            <fieldset class="uk-fieldset">
+                <div class="uk-margin">
+                    <input class="uk-input" placeholder="Project Name" />
+                </div>
+            </fieldset>
         </div>
+    </div>
+
+    <div class="uk-card-footer" *ngIf="newProject.platform != null">
+        <button class="uk-button uk-button-default" (click)="onClickStartOver()">Start Over</button>
     </div>
 </div>

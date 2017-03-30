@@ -17,6 +17,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import {ETPlatform, ETProject} from "../../../models/project.model";
 
 @Component({
     selector: 'et-new-project',
@@ -24,8 +25,34 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['new-project.component.css']
 })
 export class NewProjectComponent implements OnInit {
+
+    ANDROID = ETPlatform.ANDROID;
+    APPLE = ETPlatform.APPLE;
+
+    /**
+     * The project being created.
+     */
+    newProject: ETProject;
+
     constructor() { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.reset();
+    }
+
+    /**
+     * Resets the fields pertaining to the new project.
+     */
+    private reset() {
+        this.newProject = {};
+    }
+
+    onClickPlatform(platform: ETPlatform) {
+        this.newProject.platform = platform;
+    }
+
+    onClickStartOver() {
+        this.reset();
+    }
 
 }
