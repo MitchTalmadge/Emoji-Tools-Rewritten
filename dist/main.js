@@ -16,14 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const packager = require('electron-packager');
+const {app, BrowserWindow, Menu} = require('electron');
 
-packager({
-    dir: './dist',
-    all: true,
-    appCopyright: 'Copyright (C) 2015-2017 Mitch Talmadge (https://MitchTalmadge.com)',
-    icon: './src/resources/images/favicon.ico',
-    out: './build',
-    overwrite: true,
-    prune: false
-}, () => {});
+app.on('ready', function () {
+    let mainWindow = new BrowserWindow({
+        width: 1200,
+        height: 800,
+        title: 'Emoji Tools',
+        icon: __dirname + '/assets/resources/images/favicon.ico',
+        titleBarStyle: 'hidden',
+        resizable: true,
+        fullscreenable: true,
+        frame: true,
+        autoHideMenuBar: true
+    });
+
+    mainWindow.loadURL('file://' + __dirname + '/assets/index.html');
+    Menu.setApplicationMenu(null);
+});

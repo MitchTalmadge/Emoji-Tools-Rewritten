@@ -1,0 +1,10 @@
+{
+  "name": "emoji-tools",
+  "productName": "Emoji Tools",
+  "author": "Mitch Talmadge",
+  "homepage": "https://MitchTalmadge.com/",
+  "version": "2.0.0",
+  "private": true,
+  "main": "main.js",
+  "license": "GPL-3"
+}

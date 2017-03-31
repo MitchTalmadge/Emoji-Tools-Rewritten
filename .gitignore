@@ -46,7 +46,8 @@ fabric.properties
 
 /node_modules/
 /npm-debug.log
-/dist/
+/dist/assets
+/build
 /.awcache/
 /lib/
 /tmp/

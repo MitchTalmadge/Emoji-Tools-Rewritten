@@ -33,7 +33,7 @@ config.module.rules.unshift(
 config.plugins.push(
     new HtmlWebpackPlugin({
         template: path.join(__dirname, '../src/index.html.ejs'),
-        filename: path.join(__dirname, '../tmp/index.html'),
+        filename: path.join(__dirname, '../dist/assets/index.html'),
         inject: 'body',
         minify: {
             minifyCSS: true,
@@ -48,13 +48,13 @@ config.plugins.push(
         tsConfigPath: path.join(__dirname, '../tsconfig.json'),
         entryModule: path.join(__dirname, "../src/scripts/app.module#AppModule")
     }),
-    new CleanWebpackPlugin(['tmp', 'dist'], {
+    new CleanWebpackPlugin(['build', 'dist/assets'] {
         root: path.join(__dirname, '../')
     })
 );
 
 config.output = {
-    path: path.join(__dirname, '../tmp/'),
+    path: path.join(__dirname, '../dist/assets/'),
     filename: './resources/scripts/[name]-[chunkhash].js',
     chunkFilename: './resources/scripts/[id].chunk.js'
 };
