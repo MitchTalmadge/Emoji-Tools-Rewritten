@@ -41,3 +41,10 @@
     border-radius: 8px;
     background-clip: content-box;
 }
+
+:host /deep/ :not(input):not(textarea),
+:host /deep/ :not(input):not(textarea)::after,
+:host /deep/ :not(input):not(textarea)::before {
+    -webkit-user-select: none;
+    user-select: none;
+}

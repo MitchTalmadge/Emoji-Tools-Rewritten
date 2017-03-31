@@ -20,7 +20,7 @@
     <div class="uk-card-body">
         <h2 class="uk-card-title">Start a New Project</h2>
         <div *ngIf="newProject.platform == null">
-            <p>Select Your Platform to Get Started!</p>
+            <p>Select your Platform to get started!</p>
             <hr/>
             <div class="uk-grid">
                 <div class="uk-width-1-2 uk-text-center">
@@ -43,17 +43,18 @@
                 </i>
                 {{newProject.platform === ANDROID ? 'Android' : 'Apple'}}
             </div>
-            <p>Great! Give Your Project a Name.</p>
+            <p>Great! Now give your Project a name.
             <hr/>
             <fieldset class="uk-fieldset">
                 <div class="uk-margin">
-                    <input class="uk-input" placeholder="Project Name" />
+                    <input class="uk-input" placeholder="Project Name (e.g. Samsung Emojis)" [formControl]="formGroup.controls['name']" />
                 </div>
             </fieldset>
         </div>
     </div>
 
     <div class="uk-card-footer" *ngIf="newProject.platform != null">
+        <button class="uk-button uk-button-primary" [disabled]="formGroup.invalid"  (click)="onClickFinish()">Finish</button>
         <button class="uk-button uk-button-default" (click)="onClickStartOver()">Start Over</button>
     </div>
 </div>

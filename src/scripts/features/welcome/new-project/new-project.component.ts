@@ -18,6 +18,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import {ETPlatform, ETProject} from "../../../models/project.model";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
     selector: 'et-new-project',
@@ -34,7 +35,9 @@ export class NewProjectComponent implements OnInit {
      */
     newProject: ETProject;
 
-    constructor() { }
+    formGroup: FormGroup;
+
+    constructor(private formBuilder: FormBuilder) { }
 
     ngOnInit() {
         this.reset();
@@ -45,10 +48,18 @@ export class NewProjectComponent implements OnInit {
      */
     private reset() {
         this.newProject = {};
+        this.formGroup = this.formBuilder.group({
+            name: [null, Validators.compose([Validators.required, Validators.maxLength(30), Validators.pattern("^[A-Za-z0-9 ]+$")])]
+        })
     }
 
     onClickPlatform(platform: ETPlatform) {
         this.newProject.platform = platform;
+    }
+
+    onClickFinish() {
+        this.newProject.name = this.formGroup.controls['name'].value;
+        // TODO: Save project
     }
 
     onClickStartOver() {

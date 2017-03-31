@@ -22,10 +22,12 @@ import { WelcomeComponent } from './welcome.component';
 import {ProjectsComponent} from "./projects/projects.component";
 import {NewProjectComponent} from "./new-project/new-project.component";
 import {CommonModule} from "@angular/common";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
-        CommonModule
+        CommonModule,
+        ReactiveFormsModule,
     ],
     declarations: [
         WelcomeComponent,
