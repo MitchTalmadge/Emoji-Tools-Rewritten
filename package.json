@@ -5,11 +5,11 @@
   "homepage": "https://MitchTalmadge.com/",
   "version": "1.0.0",
   "private": true,
-  "main": "index.js",
+  "main": "main-dev.js",
   "scripts": {
-    "dev-watch": "cross-env NODE_ENV=dev webpack-dev-server --config webpack/webpack.dev.config.js",
+    "dev-watch": "cross-env NODE_ENV=dev webpack-dev-server --config build/webpack/webpack.dev.config.js",
     "dev-electron": "cross-env NODE_ENV=dev electron .",
-    "build": "cross-env NODE_ENV=prod webpack --config webpack/webpack.production.config.js -p && node build.js"
+    "build": "cross-env NODE_ENV=prod webpack --config build/webpack/webpack.production.config.js -p && node build/build.js"
   },
   "license": "GPL-3",
   "dependencies": {
@@ -48,6 +48,7 @@
     "html-loader": "^0.4.5",
     "html-webpack-plugin": "^2.28.0",
     "imports-loader": "^0.7.1",
+    "innosetup-compiler": "^5.5.9",
     "jasmine-core": "^2.5.2",
     "json-loader": "^0.5.4",
     "karma": "^1.5.0",

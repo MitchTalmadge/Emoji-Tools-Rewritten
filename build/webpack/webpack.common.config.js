@@ -16,18 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 
-var config = {
+const config = {
     target: 'electron-renderer',
 
     cache: true,
 
     entry: {
-        polyfills: path.join(__dirname, '../src/scripts/polyfills.ts'),
-        vendor: path.join(__dirname, '../src/scripts/vendors/vendors.ts'),
-        main: path.join(__dirname, '../src/scripts/main.ts')
+        polyfills: path.join(__dirname, '../../src/scripts/polyfills.ts'),
+        vendor: path.join(__dirname, '../../src/scripts/vendors/vendors.ts'),
+        main: path.join(__dirname, '../../src/scripts/main.ts')
     },
 
     module: {
@@ -78,7 +78,7 @@ var config = {
         modules: ['node_modules'],
         alias: {
             // Force all modules to use the same jquery version.
-            'jquery': path.join(__dirname, '../node_modules/jquery/src/jquery')
+            'jquery': path.join(__dirname, '../../node_modules/jquery/src/jquery')
         }
     },
 

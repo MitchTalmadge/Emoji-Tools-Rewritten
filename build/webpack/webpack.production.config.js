@@ -25,22 +25,15 @@ const path = require('path');
 config.module.rules.unshift(
     {
         test: /\.ts$/,
-        use: ['awesome-typescript-loader', 'angular2-template-loader'],
+        use: '@ngtools/webpack',
         exclude: [/\.(spec|e2e)\.ts$/]
     }
 );
 
-config.devServer = {
-    contentBase: path.join(__dirname, "../tmp/"),
-    historyApiFallback: true,
-    compress: true,
-    port: 9000
-};
-
 config.plugins.push(
     new HtmlWebpackPlugin({
-        template: path.join(__dirname, '../src/index.html.ejs'),
-        filename: path.join(__dirname, '../tmp/index.html'),
+        template: path.join(__dirname, '../../src/index.html.ejs'),
+        filename: path.join(__dirname, '../prod/assets/index.html'),
         inject: 'body',
         minify: {
             minifyCSS: true,
@@ -49,20 +42,20 @@ config.plugins.push(
             collapseWhitespace: true,
             collapseInlineTagWhitespace: true
         },
-        chunksSortMode: 'dependency',
-        dev: true
+        chunksSortMode: 'dependency'
+    }),
+    new AotPlugin({
+        tsConfigPath: path.join(__dirname, '../../tsconfig.json'),
+        entryModule: path.join(__dirname, "../../src/scripts/app.module#AppModule")
+    }),
+    new CleanWebpackPlugin(['bin', 'prod/assets'], {
+        root: path.join(__dirname, '../')
     })
 );
 
-config.plugins.push(
-    new CleanWebpackPlugin(['tmp'], {root: path.join(__dirname, "../")})
-);
-
-config.devtool = 'source-map';
 config.output = {
-    path: path.join(__dirname, '../tmp/'),
-    filename: './resources/scripts/[name].js',
-    sourceMapFilename: './resources/scripts/[name].map',
+    path: path.join(__dirname, '../prod/assets/'),
+    filename: './resources/scripts/[name]-[chunkhash].js',
     chunkFilename: './resources/scripts/[id].chunk.js'
 };
 

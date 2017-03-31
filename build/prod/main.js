@@ -17,14 +17,13 @@
  */
 
 const {app, BrowserWindow, Menu} = require('electron');
-const NODE_ENV = process.env.NODE_ENV;
 
 app.on('ready', function () {
     let mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
         title: 'Emoji Tools',
-        icon: __dirname + '/src/resources/images/favicon.ico',
+        icon: __dirname + '/assets/resources/images/favicon.ico',
         titleBarStyle: 'hidden',
         resizable: true,
         fullscreenable: true,
@@ -32,16 +31,10 @@ app.on('ready', function () {
         autoHideMenuBar: true
     });
 
-    switch (NODE_ENV) {
-        default:
-        case 'prod':
-            mainWindow.loadURL('file://' + __dirname + '/tmp/index.html');
+    mainWindow.loadURL('file://' + __dirname + '/assets/index.html');
+    Menu.setApplicationMenu(null);
+});
 
-            // Disable Menu Bar
-            Menu.setApplicationMenu(null);
-            break;
-        case 'dev':
-            mainWindow.loadURL('http://localhost:9000/');
-            break;
-    }
+app.on('window-all-closed', function() {
+    app.quit();
 });
