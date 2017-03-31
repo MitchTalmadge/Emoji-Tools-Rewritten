@@ -25,7 +25,6 @@ const path = require('path');
 config.module.rules.unshift(
     {
         test: /\.ts$/,
-        //use: '@ngtools/webpack',
         use: ['awesome-typescript-loader', 'angular2-template-loader'],
         exclude: [/\.(spec|e2e)\.ts$/]
     }
@@ -54,13 +53,6 @@ config.plugins.push(
         dev: true
     })
 );
-
-/*config.plugins.push(
-    new AotPlugin({
-        tsConfigPath: path.join(__dirname, '../tsconfig.json'),
-        entryModule: path.join(__dirname, "../src/scripts/app.module#AppModule")
-    })
-);*/
 
 config.plugins.push(
     new CleanWebpackPlugin(['tmp'], {root: path.join(__dirname, "../")})

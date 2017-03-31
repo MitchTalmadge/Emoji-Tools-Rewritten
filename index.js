@@ -33,15 +33,14 @@ app.on('ready', function () {
     });
 
     switch (NODE_ENV) {
+        default:
         case 'prod':
-            mainWindow.loadURL('file://' + __dirname + '/dist/index.html');
+            mainWindow.loadURL('file://' + __dirname + '/tmp/index.html');
 
             // Disable Menu Bar
             Menu.setApplicationMenu(null);
             break;
         case 'dev':
-
-
             mainWindow.loadURL('http://localhost:9000/');
             break;
     }

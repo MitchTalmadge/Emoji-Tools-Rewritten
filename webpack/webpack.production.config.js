@@ -16,18 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('./webpack.common.config.js');
-var AotPlugin = require('@ngtools/webpack').AotPlugin;
-var CleanWebpackPlugin = require('clean-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-
-var path = require('path');
+const config = require('./webpack.common.config.js');
+const AotPlugin = require('@ngtools/webpack').AotPlugin;
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
 config.module.rules.unshift(
     {
         test: /\.ts$/,
         use: '@ngtools/webpack',
-        //use: ['awesome-typescript-loader', 'angular2-template-loader'],
         exclude: [/\.(spec|e2e)\.ts$/]
     }
 );
@@ -35,7 +33,7 @@ config.module.rules.unshift(
 config.plugins.push(
     new HtmlWebpackPlugin({
         template: path.join(__dirname, '../src/index.html.ejs'),
-        filename: path.join(__dirname, '../dist/index.html'),
+        filename: path.join(__dirname, '../tmp/index.html'),
         inject: 'body',
         minify: {
             minifyCSS: true,
@@ -45,24 +43,18 @@ config.plugins.push(
             collapseInlineTagWhitespace: true
         },
         chunksSortMode: 'dependency'
-    })
-);
-
-config.plugins.push(
+    }),
     new AotPlugin({
-        tsConfigPath: './tsconfig.json',
-        entryModule: 'src/scripts/app.module#AppModule'
-    })
-);
-
-config.plugins.push(
-    new CleanWebpackPlugin('dist', {
+        tsConfigPath: path.join(__dirname, '../tsconfig.json'),
+        entryModule: path.join(__dirname, "../src/scripts/app.module#AppModule")
+    }),
+    new CleanWebpackPlugin(['tmp', 'dist'], {
         root: path.join(__dirname, '../')
     })
 );
 
 config.output = {
-    path: path.join(__dirname, '../dist/'),
+    path: path.join(__dirname, '../tmp/'),
     filename: './resources/scripts/[name]-[chunkhash].js',
     chunkFilename: './resources/scripts/[id].chunk.js'
 };
