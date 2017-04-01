@@ -28,7 +28,13 @@ app.on('ready', function () {
         resizable: true,
         fullscreenable: true,
         frame: true,
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        backgroundColor: '#f1f1f1',
+        show: false
+    });
+
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show()
     });
 
     mainWindow.loadURL('http://localhost:9000/');

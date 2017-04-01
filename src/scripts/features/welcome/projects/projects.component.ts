@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnInit, Output} from "@angular/core";
 import {ETPlatform, ETProject} from "../../../models/project.model";
 import {ProjectService} from "../../../core/services/project.service";
 
@@ -34,11 +34,15 @@ export class ProjectsComponent implements OnInit {
     APPLE = ETPlatform.APPLE;
     ANDROID = ETPlatform.ANDROID;
 
-    constructor(private projectService: ProjectService) { }
+    constructor(private projectService: ProjectService,
+                private changeDetectorRef: ChangeDetectorRef) {
+    }
 
     ngOnInit() {
         // Get the array of projects
-        this.projectService.getProjects().subscribe(projects => this.projects = projects);
+        this.projectService.getProjects().subscribe(projects => {
+            this.projects = projects;
+        });
     }
 
     onClickProject(project: ETProject) {

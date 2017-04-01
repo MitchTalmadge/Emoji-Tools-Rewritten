@@ -20,8 +20,6 @@ import {Moment} from "moment/moment";
 
 export interface ETProject {
 
-    id?: number,
-
     name?: string,
 
     platform?: ETPlatform,

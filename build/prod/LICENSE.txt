@@ -1,4 +1,4 @@
-Emoji Tools
+﻿Emoji Tools
 Copyright (C) 2015-2017 Mitch Talmadge (https://MitchTalmadge.com)
 
 GNU GENERAL PUBLIC LICENSE

@@ -28,7 +28,8 @@ app.on('ready', function () {
         resizable: true,
         fullscreenable: true,
         frame: true,
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        backgroundColor: '#f1f1f1'
     });
 
     mainWindow.loadURL('file://' + __dirname + '/assets/index.html');

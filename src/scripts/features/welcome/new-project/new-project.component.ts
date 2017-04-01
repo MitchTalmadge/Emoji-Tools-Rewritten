@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from "@angular/core";
 import {ETPlatform, ETProject} from "../../../models/project.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ProjectService} from "../../../core/services/project.service";
 
 @Component({
     selector: 'et-new-project',
@@ -37,7 +38,9 @@ export class NewProjectComponent implements OnInit {
 
     formGroup: FormGroup;
 
-    constructor(private formBuilder: FormBuilder) { }
+    constructor(private formBuilder: FormBuilder,
+                private projectService: ProjectService) {
+    }
 
     ngOnInit() {
         this.reset();
@@ -59,7 +62,9 @@ export class NewProjectComponent implements OnInit {
 
     onClickFinish() {
         this.newProject.name = this.formGroup.controls['name'].value;
-        // TODO: Save project
+        this.projectService.saveNewProject(this.newProject).subscribe(
+            () => this.reset()
+        );
     }
 
     onClickStartOver() {

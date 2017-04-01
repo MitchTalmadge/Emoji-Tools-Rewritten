@@ -23,10 +23,12 @@ import {EmojiToolsErrorHandler} from "./error-handler";
 import {FooterComponent} from "./footer/footer.component";
 import {RoutingModule} from "./routing.module";
 import {ProjectService} from "./services/project.service";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
     imports: [
-        RoutingModule
+        RoutingModule,
+        CommonModule
     ],
     declarations: [
         AppComponent,
