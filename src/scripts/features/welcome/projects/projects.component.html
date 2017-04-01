@@ -17,8 +17,9 @@
   -->
 
 <div id="projects-card" class="uk-card uk-card-default uk-card-body">
-    <h2 class="uk-card-title">Projects</h2>
-    <p>Load a Saved Project</p>
+    <h2 class="uk-card-title">Saved Projects</h2>
+    <p *ngIf="projects.length > 0">Load a saved Project</p>
+    <p *ngIf="projects.length == 0">There are no saved Projects.</p>
     <hr/>
 
     <div id="projects">

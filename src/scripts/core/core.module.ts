@@ -22,6 +22,7 @@ import {AppComponent} from "./app/app.component";
 import {EmojiToolsErrorHandler} from "./error-handler";
 import {FooterComponent} from "./footer/footer.component";
 import {RoutingModule} from "./routing.module";
+import {ProjectService} from "./services/project.service";
 
 @NgModule({
     imports: [
@@ -40,7 +41,8 @@ import {RoutingModule} from "./routing.module";
             provide: ErrorHandler,
             useClass: EmojiToolsErrorHandler
         },
-        RESTService
+        RESTService,
+        ProjectService
     ],
 })
 export class CoreModule {

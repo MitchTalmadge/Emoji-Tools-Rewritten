@@ -18,6 +18,7 @@
 
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ETPlatform, ETProject} from "../../../models/project.model";
+import {ProjectService} from "../../../core/services/project.service";
 
 @Component({
     selector: 'et-projects',
@@ -28,35 +29,17 @@ export class ProjectsComponent implements OnInit {
 
     @Output() openProject = new EventEmitter<ETProject>();
 
-    projects: [ETProject] = [
-        {
-            name: 'Nexus 6P Google Emojis',
-            platform: ETPlatform.ANDROID
-        },
-        {
-            name: 'iPhone Google Emojis',
-            platform: ETPlatform.APPLE
-        },
-        {
-            name: 'iPhone Samsung Emojis',
-            platform: ETPlatform.APPLE
-        },
-        {
-            name: 'Nexus 6P Twitter Emojis',
-            platform: ETPlatform.ANDROID
-        },
-        {
-            name: 'Nexus 6P Apple Emojis',
-            platform: ETPlatform.ANDROID
-        }
-    ];
+    projects: ETProject[] = [];
 
     APPLE = ETPlatform.APPLE;
     ANDROID = ETPlatform.ANDROID;
 
-    constructor() { }
+    constructor(private projectService: ProjectService) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        // Get the array of projects
+        this.projectService.getProjects().subscribe(projects => this.projects = projects);
+    }
 
     onClickProject(project: ETProject) {
         this.openProject.emit(project);
