@@ -8,15 +8,17 @@
 
     <base href="./"/>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Droid+Sans|Roboto:300,400|Ubuntu"
-          rel="stylesheet">
-
     <% //noinspection NodeModulesDependencies,JSUnresolvedVariable
     if(htmlWebpackPlugin.options.dev) { %>
     <!--suppress JSUnresolvedLibraryURL -->
     <script src="http://localhost:9000/webpack-dev-server.js"></script>
     <% } %>
+
+    <script type="text/css">
+        html, body {
+            background-color: #f1f1f1;
+        }
+    </script>
 
 </head>
 
