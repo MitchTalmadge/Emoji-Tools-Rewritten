@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Injectable, NgZone} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {ReplaySubject} from "rxjs/ReplaySubject";
 import {ETProject} from "../../models/project.model";
 import * as fs from "fs";
@@ -50,7 +50,14 @@ export class ProjectService {
                         console.log(err);
                         this.projects.next([]);
                     } else {
-                        this.projects.next(JSON.parse(data));
+                        try {
+                            let projects = JSON.parse(data);
+                            this.projects.next(projects);
+                        } catch (err2) {
+                            this.saveProjects([]).subscribe(
+                                () => this.projects.next([])
+                            );
+                        }
                     }
                 });
             } else {
