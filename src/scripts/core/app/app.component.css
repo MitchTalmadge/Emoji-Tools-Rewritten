@@ -22,7 +22,7 @@
     left: 0;
     width: 100%;
     height: calc(100vh - 50px);
-    background-color: #f1f1f1;
+    background: #f1f1f1 url('background.png');
 }
 
 :host /deep/ ::-webkit-scrollbar {

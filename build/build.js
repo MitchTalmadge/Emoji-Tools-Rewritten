@@ -18,9 +18,14 @@
 
 const packager = require('electron-packager');
 const path = require('path');
+const fs = require('fs-extra');
 
+// Copy production files into temporary directory.
+fs.copySync(path.join(__dirname, '/prod'), path.join(__dirname, '../tmp/prod'));
+
+// Package production files up with electron-packager
 packager({
-    dir: path.join(__dirname, '/prod'),
+    dir: path.join(__dirname, '../tmp/prod'),
     all: true,
     appCopyright: 'Copyright (C) 2015-2017 Mitch Talmadge (https://MitchTalmadge.com)',
     win32metadata: {

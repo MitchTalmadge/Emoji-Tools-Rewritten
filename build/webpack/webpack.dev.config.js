@@ -31,7 +31,7 @@ config.module.rules.unshift(
 );
 
 config.devServer = {
-    contentBase: path.join(__dirname, "../dev"),
+    contentBase: path.join(__dirname, "../../tmp"),
     historyApiFallback: true,
     compress: true,
     port: 9000
@@ -40,7 +40,7 @@ config.devServer = {
 config.plugins.push(
     new HtmlWebpackPlugin({
         template: path.join(__dirname, '../../src/index.html.ejs'),
-        filename: path.join(__dirname, '../dev/index.html'),
+        filename: path.join(__dirname, '../../tmp/index.html'),
         inject: 'body',
         minify: {
             minifyCSS: true,
@@ -55,15 +55,15 @@ config.plugins.push(
 );
 
 config.plugins.push(
-    new CleanWebpackPlugin(['dev'], {root: path.join(__dirname, "../")})
+    new CleanWebpackPlugin(['tmp'], {root: path.join(__dirname, "../../")})
 );
 
 config.devtool = 'source-map';
 config.output = {
-    path: path.join(__dirname, '../dev/'),
-    filename: './resources/scripts/[name].js',
-    sourceMapFilename: './resources/scripts/[name].map',
-    chunkFilename: './resources/scripts/[id].chunk.js'
+    path: path.join(__dirname, '../../tmp/'),
+    filename: 'resources/scripts/[name].js',
+    sourceMapFilename: 'resources/scripts/[name].map',
+    chunkFilename: 'resources/scripts/[id].chunk.js'
 };
 
 module.exports = config;

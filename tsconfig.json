@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "rootDir": "src/scripts",
-    "outDir": "lib",
+    "outDir": "tmp/src/scripts",
     "skipLibCheck": true,
     "target": "es5",
     "lib": [
