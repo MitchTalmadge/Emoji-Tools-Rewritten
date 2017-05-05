@@ -21,6 +21,8 @@ import {RESTService} from "./services/rest.service";
 import {EmojiToolsErrorHandler} from "./error-handler";
 import {ProjectService} from "./services/project.service";
 import {SharedModule} from "../shared/shared.module";
+import {EmojiService} from "./services/emoji.service";
+import {FontToolsService} from "./services/font-tools.service";
 
 @NgModule({
     imports: [
@@ -33,8 +35,10 @@ import {SharedModule} from "../shared/shared.module";
             provide: ErrorHandler,
             useClass: EmojiToolsErrorHandler
         },
+        EmojiService,
+        FontToolsService,
+        ProjectService,
         RESTService,
-        ProjectService
     ],
 })
 export class CoreModule {

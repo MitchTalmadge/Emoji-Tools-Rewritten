@@ -21,6 +21,8 @@ import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
 import {TooltipModule} from "./tooltip/tooltip.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {AlertModule} from "./alert/alert.module";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
     imports: [],
@@ -30,8 +32,10 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
         FormsModule,
         ReactiveFormsModule,
         RouterModule,
+        BrowserAnimationsModule,
 
-        TooltipModule
+        AlertModule,
+        TooltipModule,
     ],
     providers: [],
 })
