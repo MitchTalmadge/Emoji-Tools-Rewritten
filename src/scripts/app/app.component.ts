@@ -17,6 +17,7 @@
  */
 
 import {Component} from "@angular/core";
+import {Logger} from "../logger";
 
 @Component({
     selector: 'et-app',
@@ -24,4 +25,9 @@ import {Component} from "@angular/core";
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+    constructor() {
+        Logger.setup();
+    }
+
 }

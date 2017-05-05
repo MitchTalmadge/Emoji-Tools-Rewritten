@@ -18,7 +18,8 @@
 
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
-const process = require("child_process");
+import {Logger} from "../../logger";
+const ChildProcess = require("child_process");
 
 @Injectable()
 export class FontToolsService {
@@ -34,12 +35,21 @@ export class FontToolsService {
      */
     convertTTFtoTTX(ttfPath: string, ttxPath: string): Observable<void> {
         return Observable.create(listener => {
-            Observable.timer(1000).subscribe(
-                () => {
-                    listener.next();
-                    listener.complete();
-                }
-            )
+            let child = ChildProcess.spawn("python", ['fontToolsRunner.py'], {cwd: 'src/resources/python'});
+            child.stdout.on('data', data => {
+                Logger.logInfo("[TTF to TTX] " + data);
+            });
+            child.stderr.on('data', data => {
+                Logger.logError("[TTF to TTX] " + data);
+                listener.error("Could not convert TTF to TTX.");
+                return;
+            });
+            child.on('close', exitCode => {
+                Logger.logInfo("[TTF to TTX] Finished with code " + exitCode);
+                listener.next();
+                listener.complete();
+                return;
+            });
         });
     }
 

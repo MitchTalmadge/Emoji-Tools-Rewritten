@@ -15,13 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import {deleteLog, log, setup} from "electron-log-rotate";
 
-import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
-import {enableProdMode} from "@angular/core";
-import {AppModule} from "./app.module";
-const NODE_ENV = process.env.NODE_ENV;
+export class Logger {
 
-if (NODE_ENV !== "dev")
-    enableProdMode();
+    public static setup(): void {
+        setup({
+            appName: 'Emoji Tools/logs',
+            maxSize: 10 * 1024 * 1024
+        });
+        deleteLog(10);
+    }
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+    /**
+     * Logs an info message to the console and log file.
+     * @param message The message to log.
+     */
+    public static logInfo(message: string) {
+        log("[INFO] " + message);
+        console.log(message);
+    }
+
+    /**
+     * Logs an error message to the console and log file.
+     * @param message The message to log.
+     */
+    public static logError(message: string) {
+        log("[ERROR] " + message);
+        console.error(message);
+    }
+
+}
