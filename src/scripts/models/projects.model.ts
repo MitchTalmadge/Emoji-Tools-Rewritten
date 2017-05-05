@@ -16,33 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#projects-card {
-    height: 100%;
-}
+import {ETProject} from "./project.model";
 
-#projects {
-    overflow-y: auto;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    max-height: calc(100% - 120px);
-    line-height: 30px;
-    color: #bbbbbb;
-}
-
-#projects .fa {
-    font-size: 30px;
-    margin-right: 10px;
-}
-
-#projects .project {
-    background-color: #fff;
-    border: 1px dashed #ddd;
-    font-size: 18px;
-}
-
-#projects .project:hover {
-    background-color: #f1f1f1;
-    border: 1px solid #f1f1f1;
-    cursor: pointer;
-    color: #666;
+/**
+ * Maps project names to project objects.
+ */
+export interface ETProjects {
+    [name: string]: ETProject;
 }

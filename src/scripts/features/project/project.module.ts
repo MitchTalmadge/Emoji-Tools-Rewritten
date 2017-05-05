@@ -21,6 +21,8 @@ import {NgModule} from "@angular/core";
 import {ProjectComponent} from "./project.component";
 import {SharedModule} from "../../shared/shared.module";
 import {HeaderModule} from "../../app/header/header.module";
+import {ProjectToolsSidebarComponent} from "./tools-sidebar/tools-sidebar.component";
+import {ProjectEmojiPaneComponent} from "./emoji-pane/emoji-pane.component";
 
 @NgModule({
     imports: [
@@ -29,7 +31,9 @@ import {HeaderModule} from "../../app/header/header.module";
         HeaderModule
     ],
     declarations: [
-        ProjectComponent
+        ProjectComponent,
+        ProjectEmojiPaneComponent,
+        ProjectToolsSidebarComponent
     ],
     exports: [],
     providers: [],

@@ -22,10 +22,11 @@
         <div *ngIf="step == 0">
             <p>Select an Emoji Font File to get started.</p>
             <hr/>
-            <div class="uk-form-custom uk-grid uk-grid-small" style="max-width: initial">
-                <input type="file" (change)="onFontFileSelected($event)" accept=".ttf">
+            <div class="uk-grid uk-grid-small" style="max-width: initial">
                 <div class="uk-width-1-5">
-                    <button class="uk-button uk-button-default" type="button" tabindex="-1">Select
+                    <input type="file" #fontFileSelector (change)="onFontFileSelected($event)" accept=".ttf" class="uk-hidden">
+                    <button class="uk-button uk-button-default" type="button" tabindex="-1" (click)="fontFileSelector.click()">
+                        Select
                     </button>
                 </div>
                 <div class="uk-width-4-5">

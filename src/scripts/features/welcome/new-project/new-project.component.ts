@@ -20,6 +20,7 @@ import {Component, OnInit} from "@angular/core";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ProjectService} from "../../../core/services/project.service";
 import {Router} from "@angular/router";
+const UIkit = require("uikit");
 
 @Component({
     selector: 'et-new-project',
@@ -91,7 +92,7 @@ export class NewProjectComponent implements OnInit {
         this.projectService.saveNewProject(
             this.formGroup.controls['name'].value,
             this.formGroup.controls['fontFile'].value['path'])
-            .subscribe(project => this.router.navigate(['', 'project', project.id]));
+            .subscribe(project => this.router.navigate(['', 'project', project.name]));
     }
 
     /**

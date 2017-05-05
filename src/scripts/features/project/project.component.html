@@ -21,24 +21,40 @@
     <et-header></et-header>
 
     <div class="uk-grid">
-        <div class="uk-width-3-4">
-            <h2><i class="fa fa-cube"></i> {{project?.name}}</h2>
+        <!-- Project Title and Toolbar Section -->
+        <div id="title" class="uk-width-1-1 uk-margin-bottom">
+
+            <!-- View when NOT renaming -->
+            <h2 class="uk-heading-divider" *ngIf="!renaming">
+                <i class="fa fa-folder-open"></i>
+                {{project?.name}}
+                <span class="uk-align-right uk-margin-remove" id="toolbar">
+                    <i class="fa fa-pencil" uk-tooltip title="Rename Project" (click)="onRenameProject()"></i>
+                    <i class="fa fa-sign-out" uk-tooltip title="Exit Project" (click)="onExitProject()"></i>
+                </span>
+            </h2>
+
+            <!-- View when renaming -->
+            <h2 class="uk-heading-divider" *ngIf="renaming">
+                <i class="fa fa-folder-open"></i>
+                <input #renamingInput id="renaming-input" class="uk-input uk-form-blank" title="Project Name"
+                       [formControl]="renameFormGroup?.controls['name']">
+                <span class="uk-align-right uk-margin-remove" id="renaming-toolbar">
+                    <i class="fa fa-check" uk-tooltip title="Save Changes" [class.disabled]="renameFormGroup.invalid"
+                       (click)="onSaveRename()"></i>
+                    <i class="fa fa-times" uk-tooltip title="Cancel Renaming" (click)="onCancelRename()"></i>
+                </span>
+            </h2>
         </div>
+
+        <!-- Emoji View Pane Section -->
+        <div class="uk-width-3-4" id="main-column">
+            <et-project-emoji-pane></et-project-emoji-pane>
+        </div>
+
+        <!-- Project Tools Section -->
         <div class="uk-width-1-4">
-            <a href="#" class="uk-float-right"><i class="fa fa-cog"></i></a>
-        </div>
-    </div>
-
-    <div class="uk-grid">
-        <div class="uk-width-3-4">
-            <div class="uk-card uk-card-default uk-card-body">
-
-            </div>
-        </div>
-        <div class="uk-width-1-4">
-            <div class="uk-card uk-card-default uk-card-body">
-
-            </div>
+            <et-project-tools-sidebar [project]="project"></et-project-tools-sidebar>
         </div>
     </div>
 

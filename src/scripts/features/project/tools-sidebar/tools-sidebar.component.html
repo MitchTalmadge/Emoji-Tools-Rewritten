@@ -16,18 +16,15 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div id="projects-card" class="uk-card uk-card-default uk-card-body">
-    <h2 class="uk-card-title">Saved Projects</h2>
-    <p *ngIf="projects.length > 0">Load a saved Project</p>
-    <p *ngIf="projects.length == 0">There are no saved Projects.</p>
-    <hr/>
-
-    <div id="projects">
-        <div class="project uk-section uk-section-muted uk-padding-small uk-margin-bottom"
-             *ngFor="let project of projects"
-             (click)="onClickProject(project)">
-            <i class="fa fa-folder-open"></i>
-            {{project.name}}
-        </div>
+<div class="uk-card uk-card-small uk-card-default">
+    <div class="uk-card-header">
+        <h3>Tools</h3>
+    </div>
+    <div class="uk-card-body">
+        <button class="uk-button uk-button-text" (click)="onExportEmojis()">Export Emojis</button>
+        <et-tooltip class="uk-align-right" [message]="'Export the Emojis as PNG Images'"></et-tooltip>
+    </div>
+    <div class="uk-card-footer">
+        <button class="uk-button uk-button-link uk-text-muted" (click)="onDeleteProject()">Delete Project</button>
     </div>
 </div>

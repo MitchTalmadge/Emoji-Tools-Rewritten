@@ -28,6 +28,9 @@ import {Router} from "@angular/router";
 })
 export class ProjectsComponent implements OnInit {
 
+    /**
+     * An array of existing projects.
+     */
     projects: ETProject[] = [];
 
     constructor(private projectService: ProjectService,
@@ -37,12 +40,16 @@ export class ProjectsComponent implements OnInit {
     ngOnInit() {
         // Get the array of projects
         this.projectService.getProjects().subscribe(projects => {
-            this.projects = projects;
+            // Map to an array of projects for iterating in view.
+            this.projects = Object.keys(projects).map(name => projects[name]);
         });
     }
 
+    /**
+     * When a project is clicked on to be opened.
+     */
     onClickProject(project: ETProject) {
-        this.router.navigate(['', 'project', project.id]);
+        this.router.navigate(['', 'project', project.name]);
     }
 
 }

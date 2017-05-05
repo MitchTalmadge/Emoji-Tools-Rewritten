@@ -24,12 +24,7 @@ import {Moment} from "moment/moment";
 export interface ETProject {
 
     /**
-     * The ID of the project is its name without spaces, etc.
-     */
-    id?: string
-
-    /**
-     * The name of the project, as displayed to the user.
+     * The name of the project, used for data directory name, display, etc.
      */
     name?: string
 

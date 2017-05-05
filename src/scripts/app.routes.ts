@@ -20,6 +20,7 @@ import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
 import {WelcomeComponent} from "./features/welcome/welcome.component";
 import {ProjectComponent} from "./features/project/project.component";
+import {ProjectGuard} from "./features/project/project.guard";
 
 const routes: Routes = [
     {
@@ -27,7 +28,8 @@ const routes: Routes = [
         component: WelcomeComponent
     },
     {
-        path: 'project/:projectId',
+        path: 'project/:name',
+        canActivate: [ProjectGuard],
         component: ProjectComponent
     },
     {
@@ -38,6 +40,9 @@ const routes: Routes = [
 
 @NgModule({
     imports: [RouterModule.forRoot(routes, {useHash: true})],
+    providers: [
+        ProjectGuard
+    ],
     exports: [RouterModule],
 })
 export class AppRoutesModule {
