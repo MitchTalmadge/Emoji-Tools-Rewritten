@@ -20,19 +20,9 @@ import {Moment} from "moment/moment";
 
 export interface ETProject {
 
-    name?: string,
-
-    platform?: ETPlatform,
-
+    name?: string
+    dataPath?: string
+    fontPath?: string
     lastModified?: Moment
-
-    //TODO: ETProject Model (ETProject Directory?)
-
-}
-
-export enum ETPlatform {
-
-    ANDROID,
-    APPLE
 
 }

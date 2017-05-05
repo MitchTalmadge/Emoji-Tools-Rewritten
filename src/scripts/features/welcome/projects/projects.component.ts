@@ -17,7 +17,7 @@
  */
 
 import {ChangeDetectorRef, Component, EventEmitter, OnInit, Output} from "@angular/core";
-import {ETPlatform, ETProject} from "../../../models/project.model";
+import {ETProject} from "../../../models/project.model";
 import {ProjectService} from "../../../core/services/project.service";
 
 @Component({
@@ -30,9 +30,6 @@ export class ProjectsComponent implements OnInit {
     @Output() openProject = new EventEmitter<ETProject>();
 
     projects: ETProject[] = [];
-
-    APPLE = ETPlatform.APPLE;
-    ANDROID = ETPlatform.ANDROID;
 
     constructor(private projectService: ProjectService,
                 private changeDetectorRef: ChangeDetectorRef) {

@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start Dev" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
+    <toRun type="js.build_tools.npm" name="Start Dev Electron" />
+    <toRun type="js.build_tools.npm" name="Start Dev Server" />
+    <method />
+  </configuration>
+</component>

@@ -17,7 +17,6 @@
  */
 
 import {Component, OnInit} from "@angular/core";
-import {ETPlatform, ETProject} from "../../../models/project.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ProjectService} from "../../../core/services/project.service";
 
@@ -28,14 +27,14 @@ import {ProjectService} from "../../../core/services/project.service";
 })
 export class NewProjectComponent implements OnInit {
 
-    ANDROID = ETPlatform.ANDROID;
-    APPLE = ETPlatform.APPLE;
+    /**
+     * The current step in the creation process.
+     */
+    step: number = 0;
 
     /**
-     * The project being created.
+     * Contains data about the new project.
      */
-    newProject: ETProject;
-
     formGroup: FormGroup;
 
     constructor(private formBuilder: FormBuilder,
@@ -47,22 +46,44 @@ export class NewProjectComponent implements OnInit {
     }
 
     /**
+     * When a font file is selected on step 0.
+     * @param event The change event.
+     */
+    onFontFileSelected(event) {
+        // Get the files from the event
+        let files: FileList = event.srcElement.files;
+
+        // Update the formGroup control.
+        this.formGroup.controls['fontFile'].setValue(files.item(0));
+    }
+
+    /**
+     * When the Continue button is clicked. Increases the current step by 1.
+     */
+    onClickContinue() {
+        this.step++;
+    }
+
+    /**
+     * When the Go Back button is clicked. Decreases the current step by 1.
+     */
+    onClickGoBack() {
+        this.step--;
+    }
+
+    /**
      * Resets the fields pertaining to the new project.
      */
     private reset() {
-        this.newProject = {};
+        this.step = 0;
         this.formGroup = this.formBuilder.group({
+            fontFile: [null],
             name: [null, Validators.compose([Validators.required, Validators.maxLength(30), Validators.pattern("^[A-Za-z0-9 ]+$")])]
         })
     }
 
-    onClickPlatform(platform: ETPlatform) {
-        this.newProject.platform = platform;
-    }
-
     onClickFinish() {
-        this.newProject.name = this.formGroup.controls['name'].value;
-        this.projectService.saveNewProject(this.newProject).subscribe(
+        this.projectService.saveNewProject(this.formGroup.controls['name'].value, this.formGroup.controls['fontFile'].value['path']).subscribe(
             () => this.reset()
         );
     }

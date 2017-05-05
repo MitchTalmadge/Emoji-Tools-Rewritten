@@ -25,10 +25,8 @@
     <div id="projects">
         <div class="project uk-section uk-section-muted uk-padding-small uk-margin-bottom"
              *ngFor="let project of projects"
-            (click)="onClickProject(project)">
-            <i class="fa"
-               [class.fa-android]="project.platform === ANDROID"
-               [class.fa-apple]="project.platform === APPLE"></i>
+             (click)="onClickProject(project)">
+            <i class="fa fa-cube"></i>
             {{project.name}}
         </div>
     </div>

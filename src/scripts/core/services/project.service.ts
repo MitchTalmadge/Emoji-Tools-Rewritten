@@ -19,16 +19,18 @@
 import {Injectable} from "@angular/core";
 import {ReplaySubject} from "rxjs/ReplaySubject";
 import {ETProject} from "../../models/project.model";
-import * as fs from "fs";
 import {Observable} from "rxjs/Observable";
 import * as path from "path";
+import moment = require("moment");
 const {remote} = require('electron');
 const userDataPath = remote.app.getPath('userData');
+const fs = require("fs-extra");
 
 @Injectable()
 export class ProjectService {
 
     private static readonly PROJECTS_FILE_PATH = path.join(userDataPath, "projects.json");
+    private static readonly DATA_DIR_PATH = path.join(userDataPath, "data");
 
     /**
      * Emits an array containing the user's saved projects.
@@ -77,13 +79,35 @@ export class ProjectService {
      * Saves a new project to the disk.
      * @returns An Observable that may emit an error message if the project could not be saved.
      */
-    public saveNewProject(newProject: ETProject): Observable<void> {
+    public saveNewProject(projectName: string, fontFilePath: string): Observable<void> {
         return Observable.create(listener => {
             this.projects.take(1).subscribe(projects => {
-                if (projects.filter(project => project.name === newProject.name).length > 0) {
+                if (projects.filter(project => project.name === projectName).length > 0) {
                     listener.error("A project with this name already exists.");
                     listener.complete();
                 } else {
+                    let newProject: ETProject = {};
+                    newProject.name = projectName;
+                    newProject.dataPath = path.join(ProjectService.DATA_DIR_PATH, projectName.replace(" ", "_"));
+                    newProject.fontPath = path.join(newProject.dataPath, "font.ttf");
+                    newProject.lastModified = moment();
+
+                    try {
+                        // Make sure the main data directory exists.
+                        if (!fs.existsSync(ProjectService.DATA_DIR_PATH))
+                            fs.mkdirSync(ProjectService.DATA_DIR_PATH);
+
+                        // Create a data directory for the project.
+                        fs.mkdirSync(newProject.dataPath);
+
+                        // Copy the font file to the data directory.
+                        fs.copySync(fontFilePath, newProject.fontPath);
+                    } catch (err) {
+                        listener.error(err);
+                        listener.complete();
+                        return;
+                    }
+
                     projects.push(newProject);
                     this.saveProjects(projects).subscribe(
                         () => listener.next(),
