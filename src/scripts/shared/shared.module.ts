@@ -16,33 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ErrorHandler, NgModule, Optional, SkipSelf} from "@angular/core";
-import {RESTService} from "./services/rest.service";
-import {EmojiToolsErrorHandler} from "./error-handler";
-import {ProjectService} from "./services/project.service";
-import {SharedModule} from "../shared/shared.module";
+import {NgModule} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {RouterModule} from "@angular/router";
 
 @NgModule({
     imports: [
-        SharedModule
+        CommonModule,
+        RouterModule
     ],
     declarations: [],
-    exports: [],
-    providers: [
-        {
-            provide: ErrorHandler,
-            useClass: EmojiToolsErrorHandler
-        },
-        RESTService,
-        ProjectService
+    exports: [
+        CommonModule,
+        RouterModule
     ],
+    providers: [],
 })
-export class CoreModule {
-
-    constructor(@Optional() @SkipSelf() otherCoreModule: CoreModule) {
-        if (otherCoreModule) {
-            throw new Error("The Core Module was imported twice. It can only be imported once (in the root module)");
-        }
-    }
-
+export class SharedModule {
 }

@@ -16,33 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnInit} from "@angular/core";
-import {ETProject} from "../../../models/project.model";
-import {ProjectService} from "../../../core/services/project.service";
-import {Router} from "@angular/router";
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
+import {ProjectService} from "../../core/services/project.service";
+import {ETProject} from "../../models/project.model";
 
 @Component({
-    selector: 'et-projects',
-    templateUrl: 'projects.component.html',
-    styleUrls: ['projects.component.css']
+    selector: 'et-project',
+    templateUrl: 'project.component.html'
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectComponent implements OnInit {
 
-    projects: ETProject[] = [];
+    project: ETProject;
 
-    constructor(private projectService: ProjectService,
-                private router: Router) {
+    constructor(private activatedRoute: ActivatedRoute,
+                private projectService: ProjectService) {
     }
 
     ngOnInit() {
-        // Get the array of projects
-        this.projectService.getProjects().subscribe(projects => {
-            this.projects = projects;
-        });
-    }
+        this.activatedRoute.params.subscribe(params => {
+            this.projectService.getProjectById(params['projectId'])
+                .subscribe(project => this.project = project);
 
-    onClickProject(project: ETProject) {
-        this.router.navigate(['', 'project', project.id]);
-    }
+        })
 
+    }
 }

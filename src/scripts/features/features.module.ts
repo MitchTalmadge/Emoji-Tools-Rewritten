@@ -18,24 +18,19 @@
 
 import {NgModule} from "@angular/core";
 import {WelcomeModule} from "./welcome/welcome.module";
-import {CommonModule} from "@angular/common";
+import {ProjectModule} from "./project/project.module";
 
 /**
  * A module combining the features of the application.
  */
 @NgModule({
     imports: [
-        WelcomeModule, CommonModule
+        WelcomeModule,
+        ProjectModule
     ],
-    declarations: [
-
-    ],
-    exports: [
-        WelcomeModule
-    ],
-    providers: [
-
-    ],
+    declarations: [],
+    exports: [],
+    providers: [],
 })
 export class FeaturesModule {
 }

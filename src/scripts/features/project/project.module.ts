@@ -17,23 +17,22 @@
  */
 
 import {NgModule} from "@angular/core";
-import {RouterModule, Routes} from "@angular/router";
-import {WelcomeComponent} from "../features/welcome/welcome.component";
 
-const routes: Routes = [
-    {
-        path: '',
-        component: WelcomeComponent
-    },
-    {
-        path: '*',
-        redirectTo: ''
-    }
-];
+import {ProjectComponent} from "./project.component";
+import {SharedModule} from "../../shared/shared.module";
+import {HeaderModule} from "../../app/header/header.module";
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule],
+    imports: [
+        SharedModule,
+
+        HeaderModule
+    ],
+    declarations: [
+        ProjectComponent
+    ],
+    exports: [],
+    providers: [],
 })
-export class RoutingModule {
+export class ProjectModule {
 }

@@ -16,12 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
+const {shell} = require('electron');
 
 @Component({
-    selector: 'et-app',
-    templateUrl: 'app.component.html',
-    styleUrls: ['app.component.css']
+    selector: 'et-footer',
+    templateUrl: './footer.component.html',
+    styleUrls: ['./footer.component.css']
 })
-export class AppComponent {
+export class FooterComponent implements OnInit {
+    constructor() {
+    }
+
+    ngOnInit() {
+    }
+
+    onClickCopyrightName() {
+        shell.openExternal('https://MitchTalmadge.com/');
+    }
+
+    onClickDonate() {
+        shell.openExternal('https://donate.MitchTalmadge.com/');
+    }
+
 }

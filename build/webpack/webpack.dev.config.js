@@ -61,9 +61,9 @@ config.plugins.push(
 config.devtool = 'source-map';
 config.output = {
     path: path.join(__dirname, '../../tmp/'),
-    filename: 'resources/scripts/[name].js',
-    sourceMapFilename: 'resources/scripts/[name].map',
-    chunkFilename: 'resources/scripts/[id].chunk.js'
+    filename: './resources/scripts/[name].js',
+    sourceMapFilename: './resources/scripts/[name].map',
+    chunkFilename: './resources/scripts/[id].chunk.js'
 };
 
 module.exports = config;

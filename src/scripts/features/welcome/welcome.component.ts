@@ -16,27 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {ETProject} from "../../models/project.model";
+import {Component} from "@angular/core";
 
 @Component({
     selector: 'et-welcome',
     templateUrl: 'welcome.component.html',
     styleUrls: ['welcome.component.css']
 })
-export class WelcomeComponent implements OnInit {
+export class WelcomeComponent {
     constructor() {
     }
-
-    ngOnInit() {
-    }
-
-    /**
-     * Called when a user selects a project to open.
-     * @param project The project to open.
-     */
-    onOpenProject(project: ETProject) {
-
-    }
-
 }

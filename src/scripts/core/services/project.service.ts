@@ -76,19 +76,40 @@ export class ProjectService {
     }
 
     /**
-     * Saves a new project to the disk.
-     * @returns An Observable that may emit an error message if the project could not be saved.
+     * Gets a project by its ID.
+     * @param id The ID of the project to get.
+     * @returns An Observable that returns the project if found, or throws an error if not found.
      */
-    public saveNewProject(projectName: string, fontFilePath: string): Observable<void> {
+    public getProjectById(id: string): Observable<ETProject> {
+        return Observable.create(listener => {
+            this.projects.subscribe(
+                projects => {
+                    let filteredProjects = projects.filter(project => project.id === id);
+                    if (filteredProjects.length == 0)
+                        listener.error("No project found by the ID: " + id);
+                    else
+                        listener.next(filteredProjects[0]);
+                    listener.complete();
+                }
+            )
+        });
+    }
+
+    /**
+     * Saves a new project to the disk.
+     * @returns An Observable that returns the saved project, or an error if it could not be saved.
+     */
+    public saveNewProject(projectName: string, fontFilePath: string): Observable<ETProject> {
         return Observable.create(listener => {
             this.projects.take(1).subscribe(projects => {
-                if (projects.filter(project => project.name === projectName).length > 0) {
+                if (projects.filter(project => project.name.toLowerCase() === projectName.toLowerCase()).length > 0) {
                     listener.error("A project with this name already exists.");
                     listener.complete();
                 } else {
                     let newProject: ETProject = {};
+                    newProject.id = projectName.toLowerCase().replace(" ", "_");
                     newProject.name = projectName;
-                    newProject.dataPath = path.join(ProjectService.DATA_DIR_PATH, projectName.replace(" ", "_"));
+                    newProject.dataPath = path.join(ProjectService.DATA_DIR_PATH, newProject.id);
                     newProject.fontPath = path.join(newProject.dataPath, "font.ttf");
                     newProject.lastModified = moment();
 
@@ -110,7 +131,7 @@ export class ProjectService {
 
                     projects.push(newProject);
                     this.saveProjects(projects).subscribe(
-                        () => listener.next(),
+                        () => listener.next(newProject),
                         err => listener.error(err),
                         () => listener.complete()
                     );

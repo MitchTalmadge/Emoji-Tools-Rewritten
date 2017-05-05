@@ -16,27 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, OnInit} from "@angular/core";
-const {shell} = require('electron');
+import {NgModule} from "@angular/core";
+import {RouterModule, Routes} from "@angular/router";
+import {WelcomeComponent} from "./features/welcome/welcome.component";
+import {ProjectComponent} from "./features/project/project.component";
 
-@Component({
-    selector: 'et-footer',
-    templateUrl: 'footer.component.html',
-    styleUrls: ['footer.component.css']
+const routes: Routes = [
+    {
+        path: '',
+        component: WelcomeComponent
+    },
+    {
+        path: 'project/:projectId',
+        component: ProjectComponent
+    },
+    {
+        path: '*',
+        redirectTo: ''
+    }
+];
+
+@NgModule({
+    imports: [RouterModule.forRoot(routes, {useHash: true})],
+    exports: [RouterModule],
 })
-export class FooterComponent implements OnInit {
-    constructor() {
-    }
-
-    ngOnInit() {
-    }
-
-    onClickCopyrightName() {
-        shell.openExternal('https://MitchTalmadge.com/');
-    }
-
-    onClickDonate() {
-        shell.openExternal('https://donate.MitchTalmadge.com/');
-    }
-
+export class AppRoutesModule {
 }

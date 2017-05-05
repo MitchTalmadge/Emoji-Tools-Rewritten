@@ -16,30 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
+import {Component} from "@angular/core";
+const {shell} = require('electron');
 
-import { WelcomeComponent } from './welcome.component';
-import {ProjectsComponent} from "./projects/projects.component";
-import {NewProjectComponent} from "./new-project/new-project.component";
-import {CommonModule} from "@angular/common";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {SharedModule} from "../../shared/shared.module";
-
-@NgModule({
-    imports: [
-        SharedModule,
-        ReactiveFormsModule,
-    ],
-    declarations: [
-        WelcomeComponent,
-        ProjectsComponent,
-        NewProjectComponent
-    ],
-    exports: [
-        WelcomeComponent
-    ],
-    providers: [
-
-    ],
+@Component({
+    selector: 'et-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.css']
 })
-export class WelcomeModule { }
+export class HeaderComponent {
+
+}

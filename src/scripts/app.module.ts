@@ -21,10 +21,13 @@ import {BrowserModule} from "@angular/platform-browser";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {CoreModule} from "./core/core.module";
-import {AppComponent} from "./core/app/app.component";
+import {AppComponent} from "./app/app.component";
 import {VendorModule} from "./vendors/vendors.module";
 import {FeaturesModule} from "./features/features.module";
 import {CommonModule} from "@angular/common";
+import {AppRoutesModule} from "./app.routes";
+import {FooterComponent} from "./app/footer/footer.component";
+import {HeaderModule} from "./app/header/header.module";
 
 @NgModule({
     imports: [
@@ -35,14 +38,16 @@ import {CommonModule} from "@angular/common";
         HttpModule,
         CoreModule,
         VendorModule,
-        FeaturesModule
+        FeaturesModule,
+        AppRoutesModule,
+
+        HeaderModule
     ],
     declarations: [
-
+        AppComponent,
+        FooterComponent
     ],
-    providers: [
-
-    ],
+    providers: [],
     bootstrap: [
         AppComponent
     ]

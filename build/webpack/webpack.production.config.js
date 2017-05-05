@@ -55,8 +55,8 @@ config.plugins.push(
 
 config.output = {
     path: path.join(__dirname, '../../tmp/prod/assets/'),
-    filename: 'resources/scripts/[name]-[chunkhash].js',
-    chunkFilename: 'resources/scripts/[id].chunk.js'
+    filename: './resources/scripts/[name]-[chunkhash].js',
+    chunkFilename: './resources/scripts/[id].chunk.js'
 };
 
 module.exports = config;

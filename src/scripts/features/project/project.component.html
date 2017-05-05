@@ -18,16 +18,28 @@
 
 <div class="uk-container">
 
-    <img id="logo" class="uk-align-center" src="../../../resources/images/logo-wide.svg"/>
+    <et-header></et-header>
 
     <div class="uk-grid">
-        <div id="projects-column" class="uk-width-2-5">
-            <et-projects>
-            </et-projects>
+        <div class="uk-width-3-4">
+            <h2><i class="fa fa-cube"></i> {{project?.name}}</h2>
         </div>
-        <div class="uk-width-3-5">
-            <et-new-project>
-            </et-new-project>
+        <div class="uk-width-1-4">
+            <a href="#" class="uk-float-right"><i class="fa fa-cog"></i></a>
         </div>
     </div>
+
+    <div class="uk-grid">
+        <div class="uk-width-3-4">
+            <div class="uk-card uk-card-default uk-card-body">
+
+            </div>
+        </div>
+        <div class="uk-width-1-4">
+            <div class="uk-card uk-card-default uk-card-body">
+
+            </div>
+        </div>
+    </div>
+
 </div>

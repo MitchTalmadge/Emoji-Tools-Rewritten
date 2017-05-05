@@ -19,6 +19,7 @@
 import {Component, OnInit} from "@angular/core";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ProjectService} from "../../../core/services/project.service";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'et-new-project',
@@ -38,7 +39,8 @@ export class NewProjectComponent implements OnInit {
     formGroup: FormGroup;
 
     constructor(private formBuilder: FormBuilder,
-                private projectService: ProjectService) {
+                private projectService: ProjectService,
+                private router: Router) {
     }
 
     ngOnInit() {
@@ -82,12 +84,19 @@ export class NewProjectComponent implements OnInit {
         })
     }
 
+    /**
+     * When the Finish button is clicked on the last step.
+     */
     onClickFinish() {
-        this.projectService.saveNewProject(this.formGroup.controls['name'].value, this.formGroup.controls['fontFile'].value['path']).subscribe(
-            () => this.reset()
-        );
+        this.projectService.saveNewProject(
+            this.formGroup.controls['name'].value,
+            this.formGroup.controls['fontFile'].value['path'])
+            .subscribe(project => this.router.navigate(['', 'project', project.id]));
     }
 
+    /**
+     * When the Start Over button is clicked.
+     */
     onClickStartOver() {
         this.reset();
     }

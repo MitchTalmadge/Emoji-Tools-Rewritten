@@ -16,30 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
+#header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background-color: #fff;
+    line-height: 50px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 10px 0;
+    padding: inherit;
+}
 
-import { WelcomeComponent } from './welcome.component';
-import {ProjectsComponent} from "./projects/projects.component";
-import {NewProjectComponent} from "./new-project/new-project.component";
-import {CommonModule} from "@angular/common";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {SharedModule} from "../../shared/shared.module";
+#logo {
+    height: 60px;
+    margin: 10px;
+}
 
-@NgModule({
-    imports: [
-        SharedModule,
-        ReactiveFormsModule,
-    ],
-    declarations: [
-        WelcomeComponent,
-        ProjectsComponent,
-        NewProjectComponent
-    ],
-    exports: [
-        WelcomeComponent
-    ],
-    providers: [
-
-    ],
-})
-export class WelcomeModule { }
+#header-padding {
+    height: 80px;
+    display: block;
+}

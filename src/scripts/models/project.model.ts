@@ -18,11 +18,34 @@
 
 import {Moment} from "moment/moment";
 
+/**
+ * Represents an Emoji Tools project.
+ */
 export interface ETProject {
 
+    /**
+     * The ID of the project is its name without spaces, etc.
+     */
+    id?: string
+
+    /**
+     * The name of the project, as displayed to the user.
+     */
     name?: string
+
+    /**
+     * The path to the project's data directory.
+     */
     dataPath?: string
+
+    /**
+     * The path to the project's original font file, which is within its data directory.
+     */
     fontPath?: string
+
+    /**
+     * The last time this project was modified.
+     */
     lastModified?: Moment
 
 }
