@@ -45,7 +45,13 @@ export class EmojiService {
             // Convert the font file to ttx.
             this.fontToolsService.convertTTFtoTTX(project.fontPath, ttxPath)
                 .subscribe(
-                    converted => {
+                    progress => {
+                        listener.next((progress / 100) * 50);
+                    },
+                    err => {
+                        listener.error(err);
+                    },
+                    () => {
                         // 50% Complete
                         listener.next(50);
 
@@ -68,9 +74,6 @@ export class EmojiService {
                         } catch (err) {
                             listener.error(err);
                         }
-                    },
-                    err => {
-                        listener.error(err);
                     }
                 );
         });

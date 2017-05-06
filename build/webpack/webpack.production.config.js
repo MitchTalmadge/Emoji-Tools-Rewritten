@@ -24,6 +24,16 @@ const path = require('path');
 
 config.module.rules.unshift(
     {
+        test: /\.js$/,
+        use: {
+            loader: 'babel-loader',
+            options: {
+                presets: ['env'],
+                cacheDirectory: true
+            }
+        }
+    },
+    {
         test: /\.ts$/,
         use: '@ngtools/webpack',
         exclude: [/\.(spec|e2e)\.ts$/]

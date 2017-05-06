@@ -25,8 +25,8 @@ app.on('ready', function () {
         title: 'Emoji Tools',
         icon: __dirname + '/assets/resources/images/favicon.ico',
         titleBarStyle: 'hidden',
-        resizable: true,
-        fullscreenable: true,
+        resizable: false,
+        fullscreenable: false,
         frame: true,
         autoHideMenuBar: true,
         backgroundColor: '#f1f1f1'

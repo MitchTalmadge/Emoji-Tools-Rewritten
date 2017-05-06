@@ -18,8 +18,10 @@
 
 import "core-js/es6";
 import "core-js/es7/reflect";
+import {ElectronInfo} from "./util/electron-info";
 require('zone.js/dist/zone-mix');
-if (process.env.NODE_ENV === 'dev') {
+
+if (ElectronInfo.isDevModeEnabled()) {
     Error['stackTraceLimit'] = 5;
     require('zone.js/dist/long-stack-trace-zone');
 }

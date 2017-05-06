@@ -4,6 +4,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.awcache" />
+      <excludeFolder url="file://$MODULE_DIR$/build/bin" />
       <excludeFolder url="file://$MODULE_DIR$/build/prod/python" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
