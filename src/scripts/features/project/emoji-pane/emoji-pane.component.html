@@ -25,7 +25,7 @@
 
         <!-- Emojis have not been extracted -->
         <div class="uk-flex uk-flex-middle uk-flex-center uk-height-1-1"
-             *ngIf="!extracting && project?.extractionPath == undefined">
+             *ngIf="!isExtracting() && project?.extractionPath == undefined">
             <div class="uk-grid uk-text-center">
                 <div class="uk-width-1-1">
                     <h3 class="uk-heading-divider">Emojis have not yet been extracted.</h3>
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Emojis have not been extracted -->
-        <div class="uk-flex uk-flex-middle uk-flex-center uk-height-1-1" *ngIf="extracting">
+        <div class="uk-flex uk-flex-middle uk-flex-center uk-height-1-1" *ngIf="isExtracting()">
             <div class="uk-grid uk-text-center">
                 <div class="uk-width-1-1">
                     <h3 class="uk-heading-divider">Extracting Emojis...</h3>

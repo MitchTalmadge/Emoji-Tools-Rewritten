@@ -16,11 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ProjectService} from "../../core/services/project.service";
 import {ETProject} from "../../models/project.model";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ProjectEmojiPaneComponent} from "./emoji-pane/emoji-pane.component";
+import {UIKit} from "../../util/uikit";
 
 @Component({
     selector: 'et-project',
@@ -33,6 +35,8 @@ export class ProjectComponent implements OnInit, AfterViewInit {
      * The current project being viewed.
      */
     project: ETProject;
+
+    @ViewChild(ProjectEmojiPaneComponent) emojiPane: ProjectEmojiPaneComponent;
 
     /**
      * Determines if we are currently renaming the project or not.
@@ -77,6 +81,11 @@ export class ProjectComponent implements OnInit, AfterViewInit {
      * When the Rename Project button is clicked.
      */
     onRenameProject() {
+        if (this.emojiPane.isExtracting()) {
+            UIKit.showWarningNotification("Please wait until extraction is complete.");
+            return;
+        }
+
         this.renameFormGroup = this.formBuilder.group({
             name: [this.project.name, Validators.compose([Validators.required, Validators.maxLength(30), Validators.pattern("^[A-Za-z0-9 ]+$")])]
         });
@@ -106,6 +115,22 @@ export class ProjectComponent implements OnInit, AfterViewInit {
      * When the Exit Project button is clicked.
      */
     onExitProject() {
+        if (this.emojiPane.isExtracting()) {
+            UIKit.showWarningNotification("Please wait until extraction is complete.");
+            return;
+        }
+
         this.router.navigate(['']);
+    }
+
+    /**
+     * When the status of extraction changes.
+     * @param extracting If extraction is currently taking place.
+     */
+    onExtractingStatusChange(extracting: boolean) {
+        // Cancel renaming during extraction.
+        if (extracting) {
+            this.renaming = false;
+        }
     }
 }

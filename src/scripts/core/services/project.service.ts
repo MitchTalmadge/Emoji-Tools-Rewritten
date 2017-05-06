@@ -207,18 +207,33 @@ export class ProjectService {
                         }
 
                         // Save the project.
-                        this.projects.take(1).subscribe(
-                            projects => {
-                                projects[newProject.name] = newProject;
-                                this.saveProjects(projects).subscribe(
-                                    saved => listener.next(newProject),
-                                    err => listener.error(err),
-                                    () => listener.complete()
-                                );
-                            });
+                        this.saveProject(newProject).subscribe(
+                            project => listener.next(project),
+                            err => listener.error(err),
+                            () => listener.complete()
+                        );
                     }
                 }
             )
+        });
+    }
+
+    /**
+     * Saves a single project to the disk.
+     * @param project The project to save.
+     * @returns An Observable that will emit the saved project once it has been saved (or may emit an error if the saving failed.)
+     */
+    private saveProject(project: ETProject): Observable<ETProject> {
+        return Observable.create(listener => {
+            this.projects.take(1).subscribe(
+                projects => {
+                    projects[project.name] = project;
+                    this.saveProjects(projects).subscribe(
+                        saved => listener.next(project),
+                        err => listener.error(err),
+                        () => listener.complete()
+                    );
+                });
         });
     }
 

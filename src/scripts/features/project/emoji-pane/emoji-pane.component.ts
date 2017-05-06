@@ -16,17 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
 import {ETProject} from "../../../models/project.model";
 import {EmojiService} from "../../../core/services/emoji.service";
 import {AlertComponent} from "../../../shared/alert/alert.component";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
     selector: 'et-project-emoji-pane',
     templateUrl: 'emoji-pane.component.html',
     styleUrls: ['emoji-pane.component.css']
 })
-export class ProjectEmojiPaneComponent implements OnInit {
+export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
 
     /**
      * The project associated with this pane.
@@ -36,9 +37,16 @@ export class ProjectEmojiPaneComponent implements OnInit {
     @ViewChild(AlertComponent) alert: AlertComponent;
 
     /**
-     * Whether or not we are currently extracting Emojis.
+     * Emits the status of extraction.
+     * True if extracting is started, false if it is ended.
      */
-    extracting: boolean = false;
+    @Output() extracting = new EventEmitter<boolean>();
+
+    /**
+     * The subscription to the extraction process.
+     * Null or not active if extraction is not taking place.
+     */
+    extractionSubscription: Subscription;
 
     /**
      * The progress of extraction, from 0 to 100.
@@ -51,13 +59,20 @@ export class ProjectEmojiPaneComponent implements OnInit {
     ngOnInit() {
     }
 
+    ngOnDestroy() {
+        // Stop extraction.
+        if (this.isExtracting()) {
+            this.extractionSubscription.unsubscribe();
+        }
+    }
+
     /**
      * When the Extract Emojis button is clicked.
      */
     onExtractEmojis() {
         if (this.project != null && this.project.extractionPath == null) {
-            this.extracting = true;
-            this.emojiService.extractEmojis(this.project)
+            this.extracting.emit(true);
+            this.extractionSubscription = this.emojiService.extractEmojis(this.project)
                 .subscribe(
                     progress => {
                         this.extractionProgress = progress;
@@ -65,14 +80,20 @@ export class ProjectEmojiPaneComponent implements OnInit {
                     err => {
                         console.error(err);
                         this.alert.displayErrorMessage("Could not Extract Emojis: " + err);
-                        this.extracting = false;
                     },
                     () => {
-                        this.extracting = false;
                         this.alert.displaySuccessMessage("Emojis Extracted Successfully!");
                     }
                 );
         }
+    }
+
+    /**
+     * Determines if extraction is currently taking place.
+     * @returns True if extracting, false if not.
+     */
+    isExtracting() {
+        return this.extractionSubscription != null && !this.extractionSubscription.closed;
     }
 
 }

@@ -41,13 +41,14 @@ export class FontToolsService {
             let tablesCount = 0;
 
             // Info flag, input path
-            FontToolsService.runFontTools(['-l', ttfPath]).subscribe(
+            let fontToolsSubscription = FontToolsService.runFontTools(['-l', ttfPath]).subscribe(
                 message => {
                     Logger.logInfo("[TTF to TTX] " + message);
                     let tableSearch = message.match(new RegExp(/^\s+([^\s.]+)\s+0x/gm));
                     if (tableSearch == null)
                         listener.error("Conversion from TTF to TTX failed while parsing Font Tools table info.");
-                    tablesCount = tableSearch.length;
+                    else
+                        tablesCount = tableSearch.length;
                 },
                 err => {
                     Logger.logError("[TTF to TTX] " + err);
@@ -62,7 +63,7 @@ export class FontToolsService {
                     let dumpedTablesCount = 0;
 
                     // Output flag, output path, input path.
-                    FontToolsService.runFontTools(['-o', ttxPath, ttfPath]).subscribe(
+                    fontToolsSubscription = FontToolsService.runFontTools(['-o', ttxPath, ttfPath]).subscribe(
                         message => {
                             Logger.logInfo("[TTF to TTX] " + message);
                             if (message.match(/^Dumping '.+' table/g) != null)
@@ -79,9 +80,11 @@ export class FontToolsService {
                         }
                     );
                 }
-            )
+            );
 
-
+            return () => {
+                fontToolsSubscription.unsubscribe();
+            }
         });
     }
 
@@ -95,12 +98,19 @@ export class FontToolsService {
         let cwd = ElectronInfo.isDevModeEnabled() ? 'build/prod/python' : 'resources/app/python';
 
         return Observable.create(listener => {
-            let child = child_process.spawn("python", ['fontToolsRunner.py', ...args], {cwd: cwd});
+            Logger.logInfo("[FontToolsService] Starting Font Tools with command: python fontToolsRunner.py, args: [" + args + "]");
+            let child = child_process.spawn("python", ['fontToolsRunner.py', '-e', ...args], {cwd: cwd});
             child.stdout.on('data', data => {
                 listener.next(data.toString());
             });
             // FIXME: For some reason, FontTools outputs on stderr instead of stdout sometimes. Investigation needed.
             child.stderr.on('data', data => {
+                if (data.toString().startsWith("ERROR")) {
+                    listener.error(data.toString());
+                    child.kill("SIGINT");
+                    Logger.logError("[FontToolsService] Font Tools failed due to an error.");
+                    return;
+                }
                 listener.next(data.toString());
             });
             child.on('close', exitCode => {
@@ -110,6 +120,10 @@ export class FontToolsService {
                     Logger.logInfo("[FontToolsService] Font Tools completed with exit code " + exitCode);
                 listener.complete();
             });
+
+            return () => {
+                child.kill("SIGINT");
+            };
         })
     }
 

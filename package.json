@@ -42,6 +42,7 @@
     "@types/core-js": "^0.9.41",
     "@types/jquery": "^2.0.43",
     "@types/node": "^7.0.18",
+    "@types/rx-dom": "^7.0.0",
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^3.1.3",
     "babel-core": "^6.24.1",

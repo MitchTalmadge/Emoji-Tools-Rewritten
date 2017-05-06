@@ -36,6 +36,11 @@ export class EmojiService {
      */
     extractEmojis(project: ETProject): Observable<number> {
         return Observable.create(listener => {
+            if (!fs.existsSync(project.fontPath)) {
+                listener.error("The font file could not be found.");
+                return;
+            }
+
             // 0% Complete
             listener.next(0);
 
@@ -43,7 +48,7 @@ export class EmojiService {
             let ttxPath = path.join(project.dataPath, "font.ttx");
 
             // Convert the font file to ttx.
-            this.fontToolsService.convertTTFtoTTX(project.fontPath, ttxPath)
+            let conversionSubscription = this.fontToolsService.convertTTFtoTTX(project.fontPath, ttxPath)
                 .subscribe(
                     progress => {
                         listener.next((progress / 100) * 50);
@@ -76,6 +81,10 @@ export class EmojiService {
                         }
                     }
                 );
+
+            return () => {
+                conversionSubscription.unsubscribe();
+            }
         });
     }
 
