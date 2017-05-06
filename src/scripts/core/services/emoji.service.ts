@@ -21,6 +21,7 @@ import {FontToolsService} from "./font-tools.service";
 import {ETProject} from "../../models/project.model";
 import {Observable} from "rxjs/Observable";
 import * as path from "path";
+import {FontType} from "../../models/font-type.enum";
 const fs = require("fs-extra");
 
 @Injectable()
@@ -30,11 +31,44 @@ export class EmojiService {
     }
 
     /**
+     * Determines the FontType for the font file at the given path.
+     * @param fontPath The path to the font file.
+     * @returns A Promise that gives the FontType, or rejects if the font is not of a known type (or is corrupted/invalid).
+     */
+    public determineFontType(fontPath: string): Promise<FontType> {
+        return new Promise((resolve, reject) => {
+            if (!fs.existsSync(fontPath)) {
+                reject("Font file not found.");
+                return;
+            }
+
+            this.fontToolsService.getFontTableNames(fontPath)
+                .then(tableNames => {
+                    // Apple fonts include an sbix table for glyphs.
+                    if (tableNames.includes("sbix")) {
+                        resolve(FontType.APPLE);
+                    }
+                    // Google (Android) fonts include CBLC and CBDT tables for glyphs.
+                    else if (tableNames.includes("CBLC") && tableNames.includes("CBDT")) {
+                        resolve(FontType.ANDROID);
+                    }
+                    // Unrecognized font.
+                    else {
+                        reject("This font is unrecognized.");
+                    }
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    /**
      * Extracts the emojis from the project's font file.
      * @param project The project.
      * @returns An Observable that returns, periodically, the percentage completion (0 to 100), or an error if something goes wrong.
      */
-    extractEmojis(project: ETProject): Observable<number> {
+    public extractEmojis(project: ETProject): Observable<number> {
         return Observable.create(listener => {
             if (!fs.existsSync(project.fontPath)) {
                 listener.error("The font file could not be found.");
@@ -70,13 +104,17 @@ export class EmojiService {
                                 fs.rmdirSync(extractionPath);
                             fs.mkdirSync(extractionPath);
 
-                            // TODO: Extraction
+                            // Start extracting
+                            let xmlParser = new DOMParser();
+
 
                             project.extractionPath = extractionPath;
                             // Complete
                             listener.next(100);
                             listener.complete();
                         } catch (err) {
+                            project.ttxPath = null;
+                            project.extractionPath = null;
                             listener.error(err);
                         }
                     }

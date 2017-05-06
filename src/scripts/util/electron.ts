@@ -17,14 +17,23 @@
  */
 
 const isDev = require('electron-is-dev');
+const {shell} = require('electron');
 
-export class ElectronInfo {
+export class Electron {
 
     /**
      * Determines if Electron is currently running in dev mode.
      */
     public static isDevModeEnabled(): boolean {
         return isDev;
+    }
+
+    /**
+     * Opens a link in the user's default web browser.
+     * @param url The url to open.
+     */
+    public static openExternalLink(url: string): void {
+        shell.openExternal(url);
     }
 
 }

@@ -16,12 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import "core-js/es6";
-import "core-js/es7/reflect";
-import {Electron} from "./util/electron";
-require('zone.js/dist/zone-mix');
+export enum FontType {
 
-if (Electron.isDevModeEnabled()) {
-    Error['stackTraceLimit'] = 5;
-    require('zone.js/dist/long-stack-trace-zone');
+    ANDROID,
+    APPLE
+
 }

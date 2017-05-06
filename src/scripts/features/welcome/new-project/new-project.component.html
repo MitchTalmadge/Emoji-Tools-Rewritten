@@ -24,8 +24,10 @@
             <hr/>
             <div class="uk-grid uk-grid-small" style="max-width: initial">
                 <div class="uk-width-1-5">
-                    <input type="file" #fontFileSelector (change)="onFontFileSelected($event)" accept=".ttf" class="uk-hidden">
-                    <button class="uk-button uk-button-default" type="button" tabindex="-1" (click)="fontFileSelector.click()">
+                    <input type="file" #fontFileSelector (change)="onFontFileSelected($event)" accept=".ttf"
+                           class="uk-hidden">
+                    <button class="uk-button uk-button-default" type="button" tabindex="-1"
+                            (click)="fontFileSelector.click()">
                         Select
                     </button>
                 </div>
@@ -37,14 +39,37 @@
             </div>
         </div>
         <div *ngIf="step == 1">
-            <!--<div class="uk-card-badge" style="font-size: 18px">
+            <p *ngIf="formGroup.controls['fontType'].value != null">This looks like an <span class="uk-text-bold">{{formGroup.controls['fontType'].value === FONT_TYPE_ANDROID ?
+                'Android' : 'Apple'}}</span> Font. Correct?</p>
+            <p *ngIf="formGroup.controls['fontType'].value == null" class="uk-text-danger">Unfortunately, this font file
+                is not recognized or could not be opened.
+                <br/>If you'd like to submit a request for help, please visit <a
+                        (click)="onOpenUnsupportedFontHelpPage()">this page.</a></p>
+            <hr/>
+            <div class="uk-grid">
+                <div class="uk-width-1-2 uk-text-center">
+                    <div class="font-type uk-section uk-padding-small"
+                         [class.active]="formGroup.controls['fontType'].value === FONT_TYPE_ANDROID">
+                        <i class="fa fa-android"></i>
+                    </div>
+                </div>
+                <div class="uk-width-1-2 uk-text-center">
+                    <div class="font-type uk-section uk-padding-small"
+                         [class.active]="formGroup.controls['fontType'].value === FONT_TYPE_APPLE">
+                        <i class="fa fa-apple"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="step == 2">
+            <div class="uk-card-badge" style="font-size: 18px">
                 <i class="fa"
-                   [class.fa-android]="newProject.platform === ANDROID"
-                   [class.fa-apple]="newProject.platform === APPLE">
+                   [class.fa-android]="formGroup.controls['fontType'].value === FONT_TYPE_ANDROID"
+                   [class.fa-apple]="formGroup.controls['fontType'].value === FONT_TYPE_APPLE">
                 </i>
-                {{newProject.platform === ANDROID ? 'Android' : 'Apple'}}
-            </div>-->
-            <p>Great! Now give your Project a name.
+                {{formGroup.controls['fontType'].value === FONT_TYPE_ANDROID ? 'Android' : 'Apple'}}
+            </div>
+            <p>Great! Now give your Project a name.</p>
             <hr/>
             <fieldset class="uk-fieldset">
                 <div class="uk-margin">
@@ -63,8 +88,16 @@
     </div>
 
     <div class="uk-card-footer" *ngIf="step == 1">
-        <button class="uk-button uk-button-primary" [disabled]="formGroup.invalid" (click)="onClickFinish()">Finish
+        <button class="uk-button uk-button-primary" [disabled]="formGroup.controls['fontType'].value === null"
+                (click)="onClickContinue()">
+            Yes, Continue
         </button>
         <button class="uk-button uk-button-default uk-float-right" (click)="onClickGoBack()">Go Back</button>
+    </div>
+
+    <div class="uk-card-footer" *ngIf="step == 2">
+        <button class="uk-button uk-button-primary" [disabled]="formGroup.invalid" (click)="onClickFinish()">Finish
+        </button>
+        <button class="uk-button uk-button-default uk-float-right" (click)="onClickStartOver()">Start Over</button>
     </div>
 </div>

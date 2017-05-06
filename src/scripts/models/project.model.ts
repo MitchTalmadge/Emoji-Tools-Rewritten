@@ -17,6 +17,7 @@
  */
 
 import {Moment} from "moment/moment";
+import {FontType} from "./font-type.enum";
 
 /**
  * Represents an Emoji Tools project.
@@ -37,6 +38,11 @@ export interface ETProject {
      * The path to the project's original font file, which is within its data directory.
      */
     fontPath?: string
+
+    /**
+     * The type of the font.
+     */
+    fontType?: FontType
 
     /**
      * The path to the project's ttx font file, which is within its data directory.

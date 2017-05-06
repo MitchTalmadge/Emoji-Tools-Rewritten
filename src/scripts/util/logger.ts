@@ -30,19 +30,23 @@ export class Logger {
     /**
      * Logs an info message to the console and log file.
      * @param message The message to log.
+     * @param reportingObject The object or class that is reporting this message.
      */
-    public static logInfo(message: string) {
-        log("[INFO] " + message);
-        console.log(message);
+    public static logInfo(message: string, reportingObject?: Object) {
+        let finalMessage = "[INFO] " + (reportingObject != null ? "[" + reportingObject.constructor.name + "] " : "") + message;
+        log(finalMessage);
+        console.log(finalMessage);
     }
 
     /**
      * Logs an error message to the console and log file.
      * @param message The message to log.
+     * @param reportingObject The object or class that is reporting this message.
      */
-    public static logError(message: string) {
-        log("[ERROR] " + message);
-        console.error(message);
+    public static logError(message: string, reportingObject?: Object) {
+        let finalMessage = "[ERROR] " + (reportingObject != null ? "[" + reportingObject.constructor.name + "] " : "") + message;
+        log(finalMessage);
+        console.error(finalMessage);
     }
 
 }

@@ -17,7 +17,7 @@
  */
 
 import {Component, OnInit} from "@angular/core";
-const {shell} = require('electron');
+import {Electron} from "../../util/electron";
 
 @Component({
     selector: 'et-footer',
@@ -32,11 +32,11 @@ export class FooterComponent implements OnInit {
     }
 
     onClickCopyrightName() {
-        shell.openExternal('https://MitchTalmadge.com/');
+        Electron.openExternalLink('https://MitchTalmadge.com/');
     }
 
     onClickDonate() {
-        shell.openExternal('https://donate.MitchTalmadge.com/');
+        Electron.openExternalLink('https://donate.MitchTalmadge.com/');
     }
 
 }

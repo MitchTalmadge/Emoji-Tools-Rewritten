@@ -20,6 +20,10 @@ import {Component, OnInit} from "@angular/core";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ProjectService} from "../../../core/services/project.service";
 import {Router} from "@angular/router";
+import {FontType} from "../../../models/font-type.enum";
+import {Electron} from "../../../util/electron";
+import {EmojiService} from "../../../core/services/emoji.service";
+import {Logger} from "../../../util/logger";
 const UIkit = require("uikit");
 
 @Component({
@@ -28,6 +32,9 @@ const UIkit = require("uikit");
     styleUrls: ['new-project.component.css']
 })
 export class NewProjectComponent implements OnInit {
+
+    FONT_TYPE_ANDROID = FontType.ANDROID;
+    FONT_TYPE_APPLE = FontType.APPLE;
 
     /**
      * The current step in the creation process.
@@ -41,6 +48,7 @@ export class NewProjectComponent implements OnInit {
 
     constructor(private formBuilder: FormBuilder,
                 private projectService: ProjectService,
+                private emojiService: EmojiService,
                 private router: Router) {
     }
 
@@ -64,7 +72,20 @@ export class NewProjectComponent implements OnInit {
      * When the Continue button is clicked. Increases the current step by 1.
      */
     onClickContinue() {
-        this.step++;
+        // After step 0, detect font type.
+        if (this.step == 0) {
+            this.emojiService.determineFontType(this.formGroup.controls['fontFile'].value['path'])
+                .then(fontType => {
+                    this.formGroup.controls['fontType'].setValue(fontType);
+                    this.step = 1;
+                })
+                .catch(err => {
+                    Logger.logError("Could not determine type of font file for new project: " + err, this);
+                    this.step = 1;
+                });
+        } else {
+            this.step++;
+        }
     }
 
     /**
@@ -81,6 +102,7 @@ export class NewProjectComponent implements OnInit {
         this.step = 0;
         this.formGroup = this.formBuilder.group({
             fontFile: [null],
+            fontType: [null],
             name: [null, Validators.compose([Validators.required, Validators.maxLength(30), Validators.pattern("^[A-Za-z0-9 ]+$")])]
         })
     }
@@ -100,6 +122,13 @@ export class NewProjectComponent implements OnInit {
      */
     onClickStartOver() {
         this.reset();
+    }
+
+    /**
+     * When a font is not supported and the user clicks the help link.
+     */
+    onOpenUnsupportedFontHelpPage() {
+        Electron.openExternalLink('https://github.com/MitchTalmadge/Emoji-Tools/issues');
     }
 
 }

@@ -18,15 +18,60 @@
 
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
-import {ElectronInfo} from "../../util/electron-info";
+import {Electron} from "../../util/electron";
 import {Logger} from "../../util/logger";
+import * as fs from "fs";
+import {Subscription} from "rxjs/Subscription";
 const child_process = require("child_process");
 
 @Injectable()
 export class FontToolsService {
 
-    constructor() {
+    /**
+     * Retrieves the names of the tables within the font file.
+     * @param fontPath The path to the font file.
+     * @returns A Promise that gives an array containing the table names.
+     * The length of the array can be used to determine how many tables exist.
+     */
+    public getFontTableNames(fontPath: string): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+            if (!fs.existsSync(fontPath)) {
+                reject("There is no file at the given path.");
+                return;
+            }
 
+            // Info flag, input path
+            FontToolsService.runFontTools(['-l', fontPath]).subscribe(
+                message => {
+                    Logger.logInfo(message, this);
+
+                    // Regex to extract table names from output.
+                    let searchPattern = new RegExp(/^\s+([^\s.]+)\s+0x/gm);
+                    // The results of the search.
+                    let tableSearch: RegExpExecArray;
+                    // The array to store names into.
+                    let tableNames: string[] = [];
+
+                    // Search for names until the search returns null.
+                    while((tableSearch = searchPattern.exec(message)) != null) {
+                        // Append the found name.
+                        tableNames.push(tableSearch[1]);
+                    }
+
+                    // Check if any names were found.
+                    if (tableNames.length == 0) {
+                        // No names found. Maybe output was wrong?
+                        reject("Table information could not be found.");
+                    } else {
+                        // Names found.
+                        resolve(tableNames);
+                    }
+                },
+                err => {
+                    reject(err);
+                }
+            );
+        });
     }
 
     /**
@@ -35,27 +80,16 @@ export class FontToolsService {
      * @param ttxPath The path to store the TTX.
      * @returns An Observable that emits progress (0 through 100) or an error.
      */
-    convertTTFtoTTX(ttfPath: string, ttxPath: string): Observable<number> {
+    public convertTTFtoTTX(ttfPath: string, ttxPath: string): Observable<number> {
         return Observable.create(listener => {
-            //Step 1: Figure out how many tables there are, so we can keep track of progress while converting.
-            let tablesCount = 0;
 
-            // Info flag, input path
-            let fontToolsSubscription = FontToolsService.runFontTools(['-l', ttfPath]).subscribe(
-                message => {
-                    Logger.logInfo("[TTF to TTX] " + message);
-                    let tableSearch = message.match(new RegExp(/^\s+([^\s.]+)\s+0x/gm));
-                    if (tableSearch == null)
-                        listener.error("Conversion from TTF to TTX failed while parsing Font Tools table info.");
-                    else
-                        tablesCount = tableSearch.length;
-                },
-                err => {
-                    Logger.logError("[TTF to TTX] " + err);
-                    listener.error("Conversion from TTF to TTX failed while counting tables.");
-                },
-                () => {
-                    Logger.logInfo("[TTF to TTX] Found " + tablesCount + " tables.");
+            // The subscription that should be un-subscribed from upon cancellation.
+            let subscription: Subscription;
+
+            //Step 1: Figure out how many tables there are, so we can keep track of progress while converting.
+            this.getFontTableNames(ttfPath)
+                .then(tableNames => {
+                    Logger.logInfo("Found " + tableNames.length + " tables.", this);
 
                     // Step 2: Convert, and update listener with progress.
 
@@ -63,15 +97,15 @@ export class FontToolsService {
                     let dumpedTablesCount = 0;
 
                     // Output flag, output path, input path.
-                    fontToolsSubscription = FontToolsService.runFontTools(['-o', ttxPath, ttfPath]).subscribe(
+                    subscription = FontToolsService.runFontTools(['-o', ttxPath, ttfPath]).subscribe(
                         message => {
-                            Logger.logInfo("[TTF to TTX] " + message);
+                            Logger.logInfo(message, this);
                             if (message.match(/^Dumping '.+' table/g) != null)
                                 dumpedTablesCount++;
-                            listener.next((dumpedTablesCount / tablesCount) * 100);
+                            listener.next((dumpedTablesCount / tableNames.length) * 100);
                         },
                         err => {
-                            Logger.logError("[TTF to TTX] " + err);
+                            Logger.logError(err, this);
                             listener.error("Conversion from TTF to TTX failed while converting tables.");
                         },
                         () => {
@@ -79,11 +113,14 @@ export class FontToolsService {
                             listener.complete();
                         }
                     );
-                }
-            );
+                })
+                .catch(err => {
+                    listener.error("Conversion from TTF to TTX failed while reading table info.");
+                    Logger.logError(err, this);
+                });
 
             return () => {
-                fontToolsSubscription.unsubscribe();
+                subscription.unsubscribe();
             }
         });
     }
@@ -95,24 +132,33 @@ export class FontToolsService {
      */
     private static runFontTools(args: string[]): Observable<string> {
         // Development and production use different paths to the python scripts.
-        let cwd = ElectronInfo.isDevModeEnabled() ? 'build/prod/python' : 'resources/app/python';
+        let cwd = Electron.isDevModeEnabled() ? 'build/prod/python' : 'resources/app/python';
 
         return Observable.create(listener => {
             Logger.logInfo("[FontToolsService] Starting Font Tools with command: python fontToolsRunner.py, args: [" + args + "]");
+            // Run Python
             let child = child_process.spawn("python", ['fontToolsRunner.py', '-e', ...args], {cwd: cwd});
+            // Configure stdout
             child.stdout.on('data', data => {
                 listener.next(data.toString());
             });
-            // FIXME: For some reason, FontTools outputs on stderr instead of stdout sometimes. Investigation needed.
+            // Configure stderr
+            // Python likes to log all messages (even info) on stderr.
             child.stderr.on('data', data => {
+                // Check for error prefix
                 if (data.toString().startsWith("ERROR")) {
+                    // Error found. Tell the listener.
                     listener.error(data.toString());
+                    // Kill the process
                     child.kill("SIGINT");
+                    // Log failure.
                     Logger.logError("[FontToolsService] Font Tools failed due to an error.");
                     return;
                 }
+
                 listener.next(data.toString());
             });
+            // Configure behavior when program finishes.
             child.on('close', exitCode => {
                 if (exitCode != 0)
                     listener.error("Font Tools did not complete successfully. Exit code: " + exitCode);

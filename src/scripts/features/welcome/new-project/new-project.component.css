@@ -16,15 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.platform {
+.font-type {
     color: #bbbbbb;
     font-size: 100px;
     background-color: #fff;
     border: 1px dashed #ddd;
 }
 
-.platform:hover {
-    cursor: pointer;
+.font-type.active {
     background-color: #f1f1f1;
     border: 1px solid #f1f1f1;
     color: #666;
