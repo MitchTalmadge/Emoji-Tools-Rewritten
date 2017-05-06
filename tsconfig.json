@@ -21,13 +21,6 @@
     "useCache": true
   },
   "exclude": [
-    "node_modules",
-    "build/prod",
-    "tmp",
-    "**/*.ngfactory.ts",
-    "**/*.shim.ts"
-  ],
-  "angularCompilerOptions": {
-    "skipMetadataEmit": true
-  }
+    "node_modules"
+  ]
 }

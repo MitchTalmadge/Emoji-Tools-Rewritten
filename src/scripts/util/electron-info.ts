@@ -16,18 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component} from "@angular/core";
-import {Logger} from "../util/logger";
+const isDev = require('electron-is-dev');
 
-@Component({
-    selector: 'et-app',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
-})
-export class AppComponent {
+export class ElectronInfo {
 
-    constructor() {
-        Logger.setup();
+    /**
+     * Determines if Electron is currently running in dev mode.
+     */
+    public static isDevModeEnabled(): boolean {
+        return isDev;
     }
 
 }

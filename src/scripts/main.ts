@@ -19,9 +19,9 @@
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {enableProdMode} from "@angular/core";
 import {AppModule} from "./app.module";
-const NODE_ENV = process.env.NODE_ENV;
+import {ElectronInfo} from "./util/electron-info";
 
-if (NODE_ENV !== "dev")
+if (!ElectronInfo.isDevModeEnabled())
     enableProdMode();
 
 platformBrowserDynamic().bootstrapModule(AppModule);

@@ -18,8 +18,10 @@
 
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
-import {Logger} from "../../logger";
-const ChildProcess = require("child_process");
+import {Logger} from "../../util/logger";
+import {ChildProcess} from "child_process";
+import {ElectronInfo} from "../../util/electron-info";
+const child_process = require("child_process");
 
 @Injectable()
 export class FontToolsService {
@@ -35,7 +37,7 @@ export class FontToolsService {
      */
     convertTTFtoTTX(ttfPath: string, ttxPath: string): Observable<void> {
         return Observable.create(listener => {
-            let child = ChildProcess.spawn("python", ['fontToolsRunner.py'], {cwd: 'src/resources/python'});
+            let child = this.runFontTools([]);
             child.stdout.on('data', data => {
                 Logger.logInfo("[TTF to TTX] " + data);
             });
@@ -51,6 +53,11 @@ export class FontToolsService {
                 return;
             });
         });
+    }
+
+    private runFontTools(args: string[]): ChildProcess {
+        let cwd = ElectronInfo.isDevModeEnabled() ? 'build/prod/python' : 'resources/app/python';
+        return child_process.spawn("python", ['fontToolsRunner.py', ...args], {cwd: cwd});
     }
 
 }
