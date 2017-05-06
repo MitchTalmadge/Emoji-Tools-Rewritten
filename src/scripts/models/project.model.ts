@@ -51,7 +51,8 @@ export interface ETProject {
 
     /**
      * The last time this project was modified.
+     * Can be formatted as a moment.
      */
-    lastModified?: Moment
+    lastModified?: string
 
 }

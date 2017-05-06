@@ -20,6 +20,7 @@ import {Component, OnInit} from "@angular/core";
 import {ETProject} from "../../../models/project.model";
 import {ProjectService} from "../../../core/services/project.service";
 import {Router} from "@angular/router";
+import moment = require("moment");
 
 @Component({
     selector: 'et-projects',
@@ -42,6 +43,7 @@ export class ProjectsComponent implements OnInit {
         this.projectService.getProjects().subscribe(projects => {
             // Map to an array of projects for iterating in view.
             this.projects = Object.keys(projects).map(name => projects[name]);
+            this.projects.sort((a, b) => moment(a.lastModified).isBefore(moment(b.lastModified)) ? 1 : -1)
         });
     }
 
@@ -49,7 +51,8 @@ export class ProjectsComponent implements OnInit {
      * When a project is clicked on to be opened.
      */
     onClickProject(project: ETProject) {
-        this.router.navigate(['', 'project', project.name]);
+        // Save project to update its last modified date, then open it.
+        this.projectService.saveProject(project).subscribe(() => this.router.navigate(['', 'project', project.name]));
     }
 
 }

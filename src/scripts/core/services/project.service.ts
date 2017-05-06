@@ -22,6 +22,7 @@ import {ETProject} from "../../models/project.model";
 import {Observable} from "rxjs/Observable";
 import * as path from "path";
 import {ETProjects} from "../../models/projects.model";
+import {Logger} from "../../util/logger";
 import moment = require("moment");
 const {remote} = require('electron');
 const userDataPath = remote.app.getPath('userData');
@@ -60,23 +61,25 @@ export class ProjectService {
     public loadProjects(): void {
         fs.exists(ProjectService.PROJECTS_FILE_PATH, exists => {
             if (exists) {
-                fs.readFile(ProjectService.PROJECTS_FILE_PATH, 'utf8', (err, data) => {
-                    if (err) {
-                        console.log(err);
-                        this.projects.next({});
-                    } else {
-                        try {
-                            let projects = JSON.parse(data);
-                            this.projects.next(projects);
-                        } catch (err2) {
-                            this.saveProjects({}).subscribe(
-                                () => this.projects.next({})
-                            );
-                        }
-                    }
-                });
+                let data = fs.readFileSync(ProjectService.PROJECTS_FILE_PATH, 'utf8');
+                let projects;
+
+                try {
+                    projects = JSON.parse(data);
+                } catch (err) {
+                    Logger.logError("Could not read projects file: " + err);
+                    this.saveProjects({}).subscribe(
+                        () => this.projects.next({})
+                    );
+                    return;
+                }
+
+                this.projects.next(projects);
             } else {
-                this.projects.next({});
+                Logger.logInfo("Projects file does not exist. Creating...");
+                this.saveProjects({}).subscribe(
+                    () => this.projects.next({})
+                );
             }
         });
     }
@@ -114,7 +117,8 @@ export class ProjectService {
      * @param newName The new name of the project.
      * @returns An Observable that returns the saved project, or throws an error if saving did not succeed.
      */
-    renameProject(currentName: string, newName: string): Observable<ETProject> {
+    public renameProject(currentName: string, newName: string): Observable<ETProject> {
+        Logger.logInfo("Renaming project " + currentName + " to " + newName);
         newName = newName.trim();
 
         return Observable.create(listener => {
@@ -180,7 +184,6 @@ export class ProjectService {
                 unique => {
                     if (!unique) { // The name is already taken.
                         listener.error("A project with this name already exists.");
-                        listener.complete();
                     } else { // The name is available.
 
                         // Fill out the new project.
@@ -188,7 +191,6 @@ export class ProjectService {
                         newProject.name = projectName;
                         newProject.dataPath = path.join(ProjectService.DATA_DIR_PATH, newProject.name);
                         newProject.fontPath = path.join(newProject.dataPath, "font.ttf");
-                        newProject.lastModified = moment();
 
                         try {
                             // Make sure the main data directory exists.
@@ -202,7 +204,6 @@ export class ProjectService {
                             fs.copySync(fontFilePath, newProject.fontPath);
                         } catch (err) {
                             listener.error(err);
-                            listener.complete();
                             return;
                         }
 
@@ -223,11 +224,14 @@ export class ProjectService {
      * @param project The project to save.
      * @returns An Observable that will emit the saved project once it has been saved (or may emit an error if the saving failed.)
      */
-    private saveProject(project: ETProject): Observable<ETProject> {
+    public saveProject(project: ETProject): Observable<ETProject> {
+        Logger.logInfo("Saving project: " + project.name);
+
         return Observable.create(listener => {
             this.projects.take(1).subscribe(
                 projects => {
                     projects[project.name] = project;
+                    project.lastModified = moment().toISOString();
                     this.saveProjects(projects).subscribe(
                         saved => listener.next(project),
                         err => listener.error(err),
@@ -238,7 +242,7 @@ export class ProjectService {
     }
 
     /**
-     * Saves the array of projects to the disk.
+     * Saves the projects dictionary to the disk.
      * @param projects The projects to save.
      * @returns An Observable that will emit once the projects have been saved (or may emit an error if the saving failed.)
      */
@@ -251,14 +255,13 @@ export class ProjectService {
                             listener.error(err.message);
                             console.log("Error while saving Projects: " + err);
                         } else {
-                            this.projects.next(projects);
+                            this.loadProjects();
                             listener.next();
+                            listener.complete();
                         }
-                        listener.complete();
                     });
             } else {
                 listener.error("Invalid Argument: Projects are null.");
-                listener.complete();
             }
         });
     }
