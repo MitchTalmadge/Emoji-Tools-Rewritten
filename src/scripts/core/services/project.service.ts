@@ -24,11 +24,9 @@ import * as path from "path";
 import {ETProjects} from "../../models/projects.model";
 import {Logger} from "../../util/logger";
 import {ETConstants} from "../../util/constants";
+import {ETFontType} from "../../models/font-type.enum";
+import * as fs from "fs-extra";
 import moment = require("moment");
-import {FontType} from "../../models/font-type.enum";
-const {remote} = require('electron');
-const userDataPath = remote.app.getPath('userData');
-const fs = require("fs-extra");
 
 @Injectable()
 export class ProjectService {
@@ -160,7 +158,7 @@ export class ProjectService {
      * Saves a new project to the disk.
      * @returns An Observable that returns the saved project, or an error if it could not be saved.
      */
-    public saveNewProject(projectName: string, fontFilePath: string, fontType: FontType): Observable<ETProject> {
+    public saveNewProject(projectName: string, fontFilePath: string, fontType: ETFontType): Observable<ETProject> {
         projectName = projectName.trim();
 
         return Observable.create(listener => {

@@ -16,24 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * The different available font table names in the ttx file.
- * (Availability depends on font type).
- */
-export enum FontTable {
+import {NgModule} from "@angular/core";
 
-    GlyphOrder,
-    CBDT,
-    CBLC,
-    GSUB,
-    OS_2,
-    cmap,
-    head,
-    hhea,
-    hmtx,
-    maxp,
-    name,
-    post,
-    sbix,
+import {ErrorComponent} from "./error.component";
+import {SharedModule} from "../../shared/shared.module";
+import {HeaderModule} from "../../app/header/header.module";
 
+@NgModule({
+    imports: [
+        SharedModule,
+        HeaderModule
+    ],
+    declarations: [
+        ErrorComponent
+    ],
+    exports: [],
+    providers: [],
+})
+export class ErrorModule {
 }

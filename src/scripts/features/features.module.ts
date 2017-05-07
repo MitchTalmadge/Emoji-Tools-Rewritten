@@ -19,6 +19,7 @@
 import {NgModule} from "@angular/core";
 import {WelcomeModule} from "./welcome/welcome.module";
 import {ProjectModule} from "./project/project.module";
+import {ErrorModule} from "./error/error.module";
 
 /**
  * A module combining the features of the application.
@@ -26,7 +27,8 @@ import {ProjectModule} from "./project/project.module";
 @NgModule({
     imports: [
         WelcomeModule,
-        ProjectModule
+        ProjectModule,
+        ErrorModule
     ],
     declarations: [],
     exports: [],

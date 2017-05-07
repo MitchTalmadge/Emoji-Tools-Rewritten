@@ -1,0 +1,54 @@
+<!--
+  ~ Emoji Tools
+  ~ Copyright (C) 2015-2017 Mitch Talmadge (https://MitchTalmadge.com)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<et-header></et-header>
+
+<div class="uk-container">
+
+    <div class="uk-grid">
+        <div class="uk-width-1-1">
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-body">
+                    <h2 class="uk-heading-divider uk-text-warning">
+                        <i class="fa fa-warning"></i>
+                        Aw crap, it broke.
+                    </h2>
+                    <p>Whatever you were doing just a moment ago broke Emoji Tools. It's okay though. It happens.
+                        I'm
+                        not mad! In fact, I'd like to know how you did it.</p>
+                    <p>Please submit an issue on <a (click)="onClickSubmitIssue()">this page.</a> That way, I can
+                        make
+                        sure that it doesn't happen again.</p>
+                    <hr *ngIf="error"/>
+                    <p *ngIf="error != undefined"
+                       class="uk-text-muted">If you are curious, the error was: {{error}}</p>
+                    <div class="uk-align-right">
+                        Here's a kitten to help you feel better.
+                        <img src="cat.png"/>
+                    </div>
+                </div>
+                <div class="uk-card-footer">
+                    <button class="uk-button uk-button-default"
+                            (click)="onClickGoHome()">Return to Safety
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

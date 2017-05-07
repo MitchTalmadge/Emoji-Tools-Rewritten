@@ -23,7 +23,7 @@ import {Logger} from "../../util/logger";
 import {Subscription} from "rxjs/Subscription";
 import * as path from "path";
 import {ETConstants} from "../../util/constants";
-import {FontTable} from "../../models/font-table.enum";
+import {ETFontTable} from "../../models/tables/font-table.enum";
 const child_process = require("child_process");
 const fs = require("fs-extra");
 
@@ -85,7 +85,7 @@ export class FontToolsService {
      * @param ttxDirPath The path to the ttx directory containing the ttx files.
      * @returns A Promise that gives the path to the ttx file being sought, or rejects if it could not be found.
      */
-    public getTTXPathForTable(table: FontTable, ttxDirPath: string): Promise<string> {
+    public getTTXPathForTable(table: ETFontTable, ttxDirPath: string): Promise<string> {
         return new Promise((resolve, reject) => {
             let ttxFilePath = path.join(ttxDirPath, ETConstants.PROJECT_TTX_FILE_NAME);
 

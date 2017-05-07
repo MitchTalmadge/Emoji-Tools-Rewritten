@@ -20,6 +20,11 @@ import * as path from "path";
 import {Electron} from "./electron";
 export class ETConstants {
 
+    public static readonly MITCH_HOMEPAGE_URL = "https://MitchTalmadge.com";
+    public static readonly MITCH_DONATE_URL = "https://donate.MitchTalmadge.com";
+    public static readonly ET_ISSUES_URL = "https://github.com/MitchTalmadge/Emoji-Tools/issues";
+    public static readonly PYTHON_DOWNLOAD_URL = "https://www.python.org/downloads/";
+
     // Projects data directory
 
     public static readonly PROJECT_DATA_DIR_NAME = "projects";

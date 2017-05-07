@@ -21,15 +21,16 @@ import {FontToolsService} from "./font-tools.service";
 import {ETProject} from "../../models/project.model";
 import {Observable} from "rxjs/Observable";
 import * as path from "path";
-import {FontType} from "../../models/font-type.enum";
+import {ETFontType} from "../../models/font-type.enum";
 import {ETConstants} from "../../util/constants";
 import * as fs from "fs-extra";
-import {FontTable} from "../../models/font-table.enum";
+import {cmapTableService} from "./tables/cmap.table.service";
 
 @Injectable()
 export class EmojiService {
 
-    constructor(private fontToolsService: FontToolsService) {
+    constructor(private fontToolsService: FontToolsService,
+                private cmapTableService: cmapTableService) {
     }
 
     /**
@@ -37,7 +38,7 @@ export class EmojiService {
      * @param fontPath The path to the font file.
      * @returns A Promise that gives the FontType, or rejects if the font is not of a known type (or is corrupted/invalid).
      */
-    public determineFontType(fontPath: string): Promise<FontType> {
+    public determineFontType(fontPath: string): Promise<ETFontType> {
         return new Promise((resolve, reject) => {
             if (!fs.existsSync(fontPath)) {
                 reject("Font file not found.");
@@ -48,11 +49,11 @@ export class EmojiService {
                 .then(tableNames => {
                     // Apple fonts include an sbix table for glyphs.
                     if (tableNames.includes("sbix")) {
-                        resolve(FontType.APPLE);
+                        resolve(ETFontType.APPLE);
                     }
                     // Google (Android) fonts include CBLC and CBDT tables for glyphs.
                     else if (tableNames.includes("CBLC") && tableNames.includes("CBDT")) {
-                        resolve(FontType.ANDROID);
+                        resolve(ETFontType.ANDROID);
                     }
                     // Unrecognized font.
                     else {
@@ -87,6 +88,7 @@ export class EmojiService {
             let conversionSubscription = this.fontToolsService.convertTTFtoTTX(project.fontPath, ttxDirPath)
                 .subscribe(
                     progress => {
+                        // ttx conversion progress.
                         listener.next((progress / 100) * 50);
                     },
                     err => {
@@ -106,15 +108,24 @@ export class EmojiService {
                             fs.ensureDirSync(extractionPath);
 
                             // Start extracting
-                            if(project.fontType === FontType.ANDROID) {
-                            }
-                            let xmlParser = new DOMParser();
 
+                            // Emoji Tools currently only supports cmap format 12.
+                            this.cmapTableService.findSubtable(project.ttxDirPath, 12)
+                                .then(cmapSubtable => {
+                                    console.log(cmapSubtable);
 
-                            project.extractionPath = extractionPath;
-                            // Complete
-                            listener.next(100);
-                            listener.complete();
+                                    if (project.fontType === ETFontType.ANDROID) {
+
+                                    }
+
+                                    project.extractionPath = extractionPath;
+                                    // Complete
+                                    listener.next(100);
+                                    listener.complete();
+                                })
+                                .catch(err => {
+                                    throw err;
+                                });
                         } catch (err) {
                             project.ttxDirPath = null;
                             project.extractionPath = null;

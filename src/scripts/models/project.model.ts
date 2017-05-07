@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {FontType} from "./font-type.enum";
+import {ETFontType} from "./font-type.enum";
 
 /**
  * Represents an Emoji Tools project.
@@ -41,7 +41,7 @@ export interface ETProject {
     /**
      * The type of the font.
      */
-    fontType?: FontType
+    fontType?: ETFontType
 
     /**
      * The path to the project's ttx directory, containing the individual ttx table files.

@@ -20,10 +20,11 @@ import {Component, OnInit} from "@angular/core";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ProjectService} from "../../../core/services/project.service";
 import {Router} from "@angular/router";
-import {FontType} from "../../../models/font-type.enum";
+import {ETFontType} from "../../../models/font-type.enum";
 import {Electron} from "../../../util/electron";
 import {EmojiService} from "../../../core/services/emoji.service";
 import {Logger} from "../../../util/logger";
+import {ETConstants} from "../../../util/constants";
 const UIkit = require("uikit");
 
 @Component({
@@ -33,8 +34,8 @@ const UIkit = require("uikit");
 })
 export class NewProjectComponent implements OnInit {
 
-    FONT_TYPE_ANDROID = FontType.ANDROID;
-    FONT_TYPE_APPLE = FontType.APPLE;
+    FONT_TYPE_ANDROID = ETFontType.ANDROID;
+    FONT_TYPE_APPLE = ETFontType.APPLE;
 
     /**
      * The current step in the creation process.
@@ -81,6 +82,7 @@ export class NewProjectComponent implements OnInit {
                 })
                 .catch(err => {
                     Logger.logError("Could not determine type of font file for new project: " + err, this);
+                    this.formGroup.controls['fontType'].setValue(null);
                     this.step = 1;
                 });
         } else {
@@ -115,7 +117,7 @@ export class NewProjectComponent implements OnInit {
             this.formGroup.controls['name'].value,
             this.formGroup.controls['fontFile'].value['path'],
             this.formGroup.controls['fontType'].value)
-            .subscribe(project => this.router.navigate(['', 'project', project.name]));
+            .subscribe(project => this.router.navigate(['project', project.name]));
     }
 
     /**
@@ -129,7 +131,7 @@ export class NewProjectComponent implements OnInit {
      * When a font is not supported and the user clicks the help link.
      */
     onOpenUnsupportedFontHelpPage() {
-        Electron.openExternalLink('https://github.com/MitchTalmadge/Emoji-Tools/issues');
+        Electron.openExternalLink(ETConstants.ET_ISSUES_URL);
     }
 
 }

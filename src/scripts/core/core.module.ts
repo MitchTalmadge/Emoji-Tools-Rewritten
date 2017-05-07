@@ -24,21 +24,23 @@ import {SharedModule} from "../shared/shared.module";
 import {EmojiService} from "./services/emoji.service";
 import {FontToolsService} from "./services/font-tools.service";
 import {TablesServiceModule} from "./services/tables/tables.module";
+import {ErrorService} from "./services/error.service";
 
 @NgModule({
     imports: [
-        SharedModule
-    ],
-    declarations: [],
-    exports: [
+        SharedModule,
+
         TablesServiceModule
     ],
+    declarations: [],
+    exports: [],
     providers: [
         {
             provide: ErrorHandler,
             useClass: EmojiToolsErrorHandler
         },
         EmojiService,
+        ErrorService,
         FontToolsService,
         ProjectService,
         RESTService,

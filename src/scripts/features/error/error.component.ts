@@ -17,30 +17,36 @@
  */
 
 import {Component, OnInit} from "@angular/core";
-import {FontToolsService} from "../../core/services/font-tools.service";
-import {Electron} from "../../util/electron";
+import {ErrorService} from "../../core/services/error.service";
 import {ETConstants} from "../../util/constants";
+import {Electron} from "../../util/electron";
+import {Router} from "@angular/router";
 
 @Component({
-    selector: 'et-welcome',
-    templateUrl: 'welcome.component.html',
-    styleUrls: ['welcome.component.css']
+    selector: 'et-error',
+    templateUrl: 'error.component.html'
 })
-export class WelcomeComponent implements OnInit {
-
-    pythonAvailable: boolean = undefined;
-
-    constructor(private fontToolsService: FontToolsService) {
-    }
-
-    ngOnInit(): void {
-        this.fontToolsService.isPythonAvailable().then(available => this.pythonAvailable = available);
-    }
+export class ErrorComponent implements OnInit {
 
     /**
-     * When the Download Python link is clicked when Python is not available.
+     * The error that triggered this page.
      */
-    onClickDownloadPython() {
-        Electron.openExternalLink(ETConstants.PYTHON_DOWNLOAD_URL);
+    error: string;
+
+    constructor(private errorService: ErrorService,
+                private router: Router) {
+    }
+
+    ngOnInit() {
+        // Get the error, if available.
+        this.errorService.getError().take(1).subscribe(error => this.error = error);
+    }
+
+    onClickSubmitIssue() {
+        Electron.openExternalLink(ETConstants.ET_ISSUES_URL);
+    }
+
+    onClickGoHome() {
+        this.router.navigate(['']);
     }
 }

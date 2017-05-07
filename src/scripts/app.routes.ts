@@ -21,6 +21,7 @@ import {RouterModule, Routes} from "@angular/router";
 import {WelcomeComponent} from "./features/welcome/welcome.component";
 import {ProjectComponent} from "./features/project/project.component";
 import {ProjectGuard} from "./features/project/project.guard";
+import {ErrorComponent} from "./features/error/error.component";
 
 const routes: Routes = [
     {
@@ -31,6 +32,10 @@ const routes: Routes = [
         path: 'project/:name',
         canActivate: [ProjectGuard],
         component: ProjectComponent
+    },
+    {
+        path: 'error',
+        component: ErrorComponent
     },
     {
         path: '*',

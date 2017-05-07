@@ -16,17 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ErrorHandler, forwardRef, Inject, Injectable, Injector} from "@angular/core";
-import {ErrorService} from "./services/error.service";
+/**
+ * The different available font table names in the ttx file.
+ * (Availability depends on font type).
+ */
+export enum ETFontTable {
 
-@Injectable()
-export class EmojiToolsErrorHandler implements ErrorHandler {
+    // Common Tables
+    GlyphOrder,
+    OS_2,
+    cmap,
+    head,
+    hhea,
+    hmtx,
+    maxp,
+    name,
+    post,
 
-    constructor(@Inject(forwardRef(() => Injector)) private injector: Injector) {
-    }
+        // Google Font Specific Tables
+    CBDT,
+    CBLC,
+    GSUB,
 
-    handleError(error) {
-        console.error("Uncaught Error: " + error);
-        this.injector.get(ErrorService).displayError(error);
-    }
+        // Apple Font Specific Tables (TODO: verify)
+    hdmx,
+    fpgm,
+    prep,
+    cvt,
+    loca,
+    glyf,
+    feat,
+    morx,
+    sbix,
+    vhea,
+    vmtx,
+
 }

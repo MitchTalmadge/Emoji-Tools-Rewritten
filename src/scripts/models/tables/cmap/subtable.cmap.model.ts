@@ -16,17 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ErrorHandler, forwardRef, Inject, Injectable, Injector} from "@angular/core";
-import {ErrorService} from "./services/error.service";
+/**
+ * Represents a cmap subtable.
+ */
+export interface ETcmapSubtable {
 
-@Injectable()
-export class EmojiToolsErrorHandler implements ErrorHandler {
+    platformID?: number
 
-    constructor(@Inject(forwardRef(() => Injector)) private injector: Injector) {
-    }
+    platformEncodingID?: number
 
-    handleError(error) {
-        console.error("Uncaught Error: " + error);
-        this.injector.get(ErrorService).displayError(error);
-    }
+    format?: number
+
+    codes?: string[]
+
+    names?: string[]
+
 }

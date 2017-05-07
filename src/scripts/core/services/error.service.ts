@@ -16,17 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ErrorHandler, forwardRef, Inject, Injectable, Injector} from "@angular/core";
-import {ErrorService} from "./services/error.service";
+import {Injectable} from '@angular/core';
+import {ReplaySubject} from "rxjs/ReplaySubject";
+import {Router} from "@angular/router";
 
 @Injectable()
-export class EmojiToolsErrorHandler implements ErrorHandler {
+export class ErrorService {
 
-    constructor(@Inject(forwardRef(() => Injector)) private injector: Injector) {
+    private error = new ReplaySubject<string>(1);
+
+    constructor(private router: Router) {
     }
 
-    handleError(error) {
-        console.error("Uncaught Error: " + error);
-        this.injector.get(ErrorService).displayError(error);
+    public displayError(error: string) {
+        this.error.next(error);
+        this.router.navigate(['error']);
     }
+
+    public getError(): ReplaySubject<string> {
+        return this.error;
+    }
+
 }

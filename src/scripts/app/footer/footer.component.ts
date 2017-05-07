@@ -18,6 +18,7 @@
 
 import {Component, OnInit} from "@angular/core";
 import {Electron} from "../../util/electron";
+import {ETConstants} from "../../util/constants";
 
 @Component({
     selector: 'et-footer',
@@ -35,21 +36,21 @@ export class FooterComponent implements OnInit {
      * When the name in the copyright message is clicked.
      */
     onClickCopyrightName() {
-        Electron.openExternalLink('https://MitchTalmadge.com/');
+        Electron.openExternalLink(ETConstants.MITCH_HOMEPAGE_URL);
     }
 
     /**
      * When the help link is clicked.
      */
     onClickGetHelp() {
-        Electron.openExternalLink('https://github.com/MitchTalmadge/Emoji-Tools/issues');
+        Electron.openExternalLink(ETConstants.ET_ISSUES_URL);
     }
 
     /**
      * When the donate link is clicked.
      */
     onClickDonate() {
-        Electron.openExternalLink('https://donate.MitchTalmadge.com/');
+        Electron.openExternalLink(ETConstants.MITCH_DONATE_URL);
     }
 
 }
