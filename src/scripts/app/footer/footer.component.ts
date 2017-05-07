@@ -31,10 +31,23 @@ export class FooterComponent implements OnInit {
     ngOnInit() {
     }
 
+    /**
+     * When the name in the copyright message is clicked.
+     */
     onClickCopyrightName() {
         Electron.openExternalLink('https://MitchTalmadge.com/');
     }
 
+    /**
+     * When the help link is clicked.
+     */
+    onClickGetHelp() {
+        Electron.openExternalLink('https://github.com/MitchTalmadge/Emoji-Tools/issues');
+    }
+
+    /**
+     * When the donate link is clicked.
+     */
     onClickDonate() {
         Electron.openExternalLink('https://donate.MitchTalmadge.com/');
     }
