@@ -25,12 +25,15 @@ import {ETFontType} from "../../models/font-type.enum";
 import {ETConstants} from "../../util/constants";
 import * as fs from "fs-extra";
 import {cmapTableService} from "./tables/cmap.table.service";
+import {CBDTTableService} from "./tables/cbdt.table.service";
+import {Logger} from "../../util/logger";
 
 @Injectable()
 export class EmojiService {
 
     constructor(private fontToolsService: FontToolsService,
-                private cmapTableService: cmapTableService) {
+                private cmapTableService: cmapTableService,
+                private CBDTTableService: CBDTTableService) {
     }
 
     /**
@@ -112,16 +115,30 @@ export class EmojiService {
                             // Emoji Tools currently only supports cmap format 12.
                             this.cmapTableService.findSubtable(project.ttxDirPath, 12)
                                 .then(cmapSubtable => {
-                                    console.log(cmapSubtable);
 
                                     if (project.fontType === ETFontType.ANDROID) {
+                                        // Android stores their images in the CBDT table.
+                                        this.CBDTTableService.extractImageData(project.ttxDirPath)
+                                            .subscribe(
+                                                imageData => {
+                                                    Logger.logInfo("Extracting " + imageData.name, this);
+                                                    let glyphNames = imageData.name.split('_');
+                                                    let glyphCodes = glyphNames.map(name => cmapSubtable.codes[cmapSubtable.names.indexOf(name)]);
 
+                                                    console.log(glyphCodes);
+                                                },
+                                                err => {
+                                                    Logger.logError("Could not extract emojis: " + err);
+                                                    listener.error(err);
+                                                },
+                                                () => {
+                                                    //project.extractionPath = extractionPath;
+                                                    // Complete
+                                                    listener.next(100);
+                                                    listener.complete();
+                                                }
+                                            )
                                     }
-
-                                    project.extractionPath = extractionPath;
-                                    // Complete
-                                    listener.next(100);
-                                    listener.complete();
                                 })
                                 .catch(err => {
                                     throw err;

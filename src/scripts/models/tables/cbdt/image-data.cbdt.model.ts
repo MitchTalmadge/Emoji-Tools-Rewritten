@@ -16,10 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Represents a single glyph's image data in the CBDT table.
+ */
 export interface ETCBDTImageData {
 
-    names?: string[]
+    /**
+     * The format of the subtable that this image data originated from.
+     */
+    format?: number
 
+    /**
+     * The name of the glyph.
+     */
+    name?: string
 
+    /**
+     * The raw image data.
+     */
+    data?: number[]
 
 }

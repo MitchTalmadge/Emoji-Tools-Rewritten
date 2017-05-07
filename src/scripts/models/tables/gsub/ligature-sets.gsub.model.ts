@@ -16,17 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from '@angular/core';
-import {cmapTableService} from "./cmap.table.service";
-import {CBDTTableService} from "./cbdt.table.service";
+export interface ETGSUBLigatureSets {
 
-@NgModule({
-    imports: [],
-    exports: [],
-    declarations: [],
-    providers: [
-        CBDTTableService,
-        cmapTableService
-    ],
-})
-export class TablesServiceModule { }
+
+}
