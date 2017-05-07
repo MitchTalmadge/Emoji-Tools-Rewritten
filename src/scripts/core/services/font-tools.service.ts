@@ -146,7 +146,7 @@ export class FontToolsService {
             // Python likes to log all messages (even info) on stderr.
             child.stderr.on('data', data => {
                 // Check for error prefix
-                if (data.toString().startsWith("ERROR")) {
+                if (data.toString().includes("ERROR: Unhandled exception")) {
                     // Error found. Tell the listener.
                     listener.error(data.toString());
                     // Kill the process

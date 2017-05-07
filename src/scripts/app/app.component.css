@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#content {
+#app-content {
     position: absolute;
     top: 0;
     left: 0;
@@ -25,26 +25,37 @@
     background: #f1f1f1 url('background.png');
 }
 
-:host /deep/ ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 16px;
     background-color: #f1f1f1;
 }
 
-:host /deep/ .uk-card ::-webkit-scrollbar {
+.uk-card ::-webkit-scrollbar {
     width: 16px;
     background-color: transparent;
 }
 
-:host /deep/ ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background-color: #ddd;
     border: 4px solid transparent;
     border-radius: 8px;
     background-clip: content-box;
 }
 
-:host /deep/ :not(input):not(textarea),
-:host /deep/ :not(input):not(textarea)::after,
-:host /deep/ :not(input):not(textarea)::before {
+:not(input):not(textarea),
+:not(input):not(textarea)::after,
+:not(input):not(textarea)::before {
     -webkit-user-select: none;
     user-select: none;
+}
+
+/* Notifications */
+
+.uk-notification {
+    background: none;
+}
+
+.uk-notification-message {
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 8px 0 #999;
 }
