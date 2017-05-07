@@ -16,14 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
+import {FontToolsService} from "../../core/services/font-tools.service";
 
 @Component({
     selector: 'et-welcome',
     templateUrl: 'welcome.component.html',
     styleUrls: ['welcome.component.css']
 })
-export class WelcomeComponent {
-    constructor() {
+export class WelcomeComponent implements OnInit {
+
+    pythonAvailable: boolean;
+
+    constructor(private fontToolsService: FontToolsService) {
+    }
+
+    ngOnInit(): void {
+        this.pythonAvailable = this.fontToolsService.isPythonAvailable();
     }
 }
