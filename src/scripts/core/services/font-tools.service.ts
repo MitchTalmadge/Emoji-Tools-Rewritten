@@ -221,19 +221,25 @@ export class FontToolsService {
 
     /**
      * Determines if python is available (installed and on the PATH).
-     * @returns True if available, false otherwise.
+     * @returns A Promise that returns a boolean, true if python is available.
      */
-    public isPythonAvailable(): boolean {
-        try {
+    public isPythonAvailable(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
             // Try to run python.
-            let child = child_process.spawn("python");
-            child.kill("SIGINT");
-            return true;
-        } catch (err) {
-            // Couldn't run python.
-            Logger.logError("Python is not available! " + err, this);
-            return false;
-        }
+            let child = child_process.spawn("python", ['--version']);
+
+            // If there's an error, python probably isn't available.
+            child.on('error', (err) => {
+                // Couldn't run python.
+                Logger.logError("Python is not available! " + err, this);
+                resolve(false);
+            });
+
+            // On close, check the exit code. 0 means it worked fine.
+            child.on('close', (exitCode) => {
+                resolve(exitCode == 0);
+            });
+        });
     }
 
 }

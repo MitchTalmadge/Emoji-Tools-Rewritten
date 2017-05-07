@@ -18,6 +18,7 @@
 
 import {Component, OnInit} from "@angular/core";
 import {FontToolsService} from "../../core/services/font-tools.service";
+import {Electron} from "../../util/electron";
 
 @Component({
     selector: 'et-welcome',
@@ -26,12 +27,16 @@ import {FontToolsService} from "../../core/services/font-tools.service";
 })
 export class WelcomeComponent implements OnInit {
 
-    pythonAvailable: boolean;
+    pythonAvailable: boolean = undefined;
 
     constructor(private fontToolsService: FontToolsService) {
     }
 
     ngOnInit(): void {
-        this.pythonAvailable = this.fontToolsService.isPythonAvailable();
+        this.fontToolsService.isPythonAvailable().then(available => this.pythonAvailable = available);
+    }
+
+    onClickDownloadPython() {
+        Electron.openExternalLink('https://www.python.org/downloads/');
     }
 }

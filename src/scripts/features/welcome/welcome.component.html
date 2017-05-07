@@ -20,18 +20,21 @@
 
     <img id="logo" class="uk-align-center" draggable="false" src="../../../resources/images/logo-wide.svg"/>
 
-    <div class="uk-grid" *ngIf="!pythonAvailable">
+    <div class="uk-grid" *ngIf="pythonAvailable === false">
         <div class="uk-width-1-1">
             <div class="uk-card uk-card-default uk-card-body uk-text-center uk-height-medium uk-flex uk-flex-middle uk-flex-center">
                 <div>
-                    <h2 class="uk-heading-divider uk-text-danger"><i class="fa fa-warning"></i> Python is not available!</h2>
-                    <p class="uk-width-3-5 uk-align-center">Emoji Tools requires an installation of Python. Please make sure Python is installed and accessible from the command line.</p>
+                    <h2 class="uk-heading-divider uk-text-danger"><i class="fa fa-warning"></i> Python is not available!
+                    </h2>
+                    <p class="uk-width-3-5 uk-align-center">Emoji Tools requires an installation of Python 2.7, 3.4, or
+                        later. Please make sure Python is installed and accessible from the command line.</p>
+                    <p>You can download and install Python <a (click)="onClickDownloadPython()">here.</a></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="uk-grid" *ngIf="pythonAvailable">
+    <div class="uk-grid" *ngIf="pythonAvailable === true">
         <div id="projects-column" class="uk-width-2-5">
             <et-projects>
             </et-projects>
