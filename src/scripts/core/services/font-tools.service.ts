@@ -97,13 +97,16 @@ export class FontToolsService {
             let tablePath: string;
 
             try {
+                // Parse the main ttx file
                 let xmlParser = new DOMParser();
-                let ttxContents = fs.readFileSync(ttxFilePath);
+                let ttxContents = fs.readFileSync(ttxFilePath, 'utf8');
                 let ttxDoc = xmlParser.parseFromString(ttxContents, "text/xml");
 
-                let tableElement = ttxDoc.getElementsByTagName(table.toString());
+                // Find the table's entry
+                let tableElement = ttxDoc.getElementsByTagName(ETFontTable[table]);
+                // There should be only one
                 if (tableElement.length == 1) {
-                    tablePath = path.join(ttxDirPath, tableElement[0]['src']);
+                    tablePath = path.join(ttxDirPath, tableElement[0].attributes.getNamedItem('src').value);
                 }
             } catch (err) {
                 reject(err);

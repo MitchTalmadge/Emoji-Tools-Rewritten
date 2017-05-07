@@ -61,14 +61,14 @@ export class cmapTableService {
                     subtable.format = format;
                     subtable.codes = [];
                     subtable.names = [];
-                    subtable.platformID = subtableElement['platformID'];
-                    subtable.platformEncodingID = subtableElement['platEncID'];
+                    subtable.platformID = +subtableElement.attributes.getNamedItem('platformID').value;
+                    subtable.platformEncodingID = +subtableElement.attributes.getNamedItem('platEncID').value;
 
                     // Get all map entries for this subtable, and add their codes and names to the interface.
                     let mapElements = subtableElement.getElementsByTagName("map");
-                    for(let i = 0; i < mapElements.length; i++) {
-                        subtable.codes[i] = mapElements[i]['code'];
-                        subtable.names[i] = mapElements[i]['name'];
+                    for (let i = 0; i < mapElements.length; i++) {
+                        subtable.codes[i] = mapElements[i].attributes.getNamedItem('code').value;
+                        subtable.names[i] = mapElements[i].attributes.getNamedItem('name').value;
                     }
 
                     // Finished.
