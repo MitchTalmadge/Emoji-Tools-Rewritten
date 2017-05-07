@@ -113,7 +113,8 @@ export class NewProjectComponent implements OnInit {
     onClickFinish() {
         this.projectService.saveNewProject(
             this.formGroup.controls['name'].value,
-            this.formGroup.controls['fontFile'].value['path'])
+            this.formGroup.controls['fontFile'].value['path'],
+            this.formGroup.controls['fontType'].value)
             .subscribe(project => this.router.navigate(['', 'project', project.name]));
     }
 

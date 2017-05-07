@@ -16,29 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const isDev = require('electron-is-dev');
-const {shell, remote} = require('electron');
-const userDataPath = remote.app.getPath('userData');
+/**
+ * The different available font table names in the ttx file.
+ * (Availability depends on font type).
+ */
+export enum FontTable {
 
-export class Electron {
-
-    /**
-     * Determines if Electron is currently running in dev mode.
-     */
-    public static isDevModeEnabled(): boolean {
-        return isDev;
-    }
-
-    public static getUserDataPath(): string {
-        return userDataPath;
-    }
-
-    /**
-     * Opens a link in the user's default web browser.
-     * @param url The url to open.
-     */
-    public static openExternalLink(url: string): void {
-        shell.openExternal(url);
-    }
+    GlyphOrder,
+    CBDT,
+    CBLC,
+    GSUB,
+    OS_2,
+    cmap,
+    head,
+    hhea,
+    hmtx,
+    maxp,
+    name,
+    post,
+    sbix,
 
 }

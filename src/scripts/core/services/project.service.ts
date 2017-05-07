@@ -23,28 +23,15 @@ import {Observable} from "rxjs/Observable";
 import * as path from "path";
 import {ETProjects} from "../../models/projects.model";
 import {Logger} from "../../util/logger";
+import {ETConstants} from "../../util/constants";
 import moment = require("moment");
+import {FontType} from "../../models/font-type.enum";
 const {remote} = require('electron');
 const userDataPath = remote.app.getPath('userData');
 const fs = require("fs-extra");
 
 @Injectable()
 export class ProjectService {
-
-    /**
-     * Names that are reserved for Windows. These names will not work.
-     */
-    private static readonly RESERVED_NAMES = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9'];
-
-    /**
-     * The path to the projects file.
-     */
-    private static readonly PROJECTS_FILE_PATH = path.join(userDataPath, "projects.json");
-
-    /**
-     * The path to the main data directory.
-     */
-    private static readonly DATA_DIR_PATH = path.join(userDataPath, "data");
 
     /**
      * Emits an array containing the user's saved projects.
@@ -59,29 +46,27 @@ export class ProjectService {
      * Loads the projects from the disk. Additionally, creates the projects file if it does not exist.
      */
     public loadProjects(): void {
-        fs.exists(ProjectService.PROJECTS_FILE_PATH, exists => {
-            if (exists) {
-                let data = fs.readFileSync(ProjectService.PROJECTS_FILE_PATH, 'utf8');
-                let projects;
+        if (fs.existsSync(ETConstants.PROJECTS_SAVE_FILE_PATH)) {
+            let data = fs.readFileSync(ETConstants.PROJECTS_SAVE_FILE_PATH, 'utf8');
+            let projects;
 
-                try {
-                    projects = JSON.parse(data);
-                } catch (err) {
-                    Logger.logError("Could not read projects file: " + err);
-                    this.saveProjects({}).subscribe(
-                        () => this.projects.next({})
-                    );
-                    return;
-                }
-
-                this.projects.next(projects);
-            } else {
-                Logger.logInfo("Projects file does not exist. Creating...");
+            try {
+                projects = JSON.parse(data);
+            } catch (err) {
+                Logger.logError("Could not read projects file: " + err);
                 this.saveProjects({}).subscribe(
                     () => this.projects.next({})
                 );
+                return;
             }
-        });
+
+            this.projects.next(projects);
+        } else {
+            Logger.logInfo("Projects file does not exist. Creating...");
+            this.saveProjects({}).subscribe(
+                () => this.projects.next({})
+            );
+        }
     }
 
     /**
@@ -136,7 +121,7 @@ export class ProjectService {
 
                                 // Change data directory name
                                 let oldDataPath: string = project.dataPath;
-                                project.dataPath = path.join(ProjectService.DATA_DIR_PATH, project.name);
+                                project.dataPath = path.join(ETConstants.PROJECT_DATA_DIR_PATH, project.name);
                                 try {
                                     fs.moveSync(oldDataPath, project.dataPath);
                                 } catch (err) {
@@ -175,7 +160,7 @@ export class ProjectService {
      * Saves a new project to the disk.
      * @returns An Observable that returns the saved project, or an error if it could not be saved.
      */
-    public saveNewProject(projectName: string, fontFilePath: string): Observable<ETProject> {
+    public saveNewProject(projectName: string, fontFilePath: string, fontType: FontType): Observable<ETProject> {
         projectName = projectName.trim();
 
         return Observable.create(listener => {
@@ -189,13 +174,14 @@ export class ProjectService {
                         // Fill out the new project.
                         let newProject: ETProject = {};
                         newProject.name = projectName;
-                        newProject.dataPath = path.join(ProjectService.DATA_DIR_PATH, newProject.name);
-                        newProject.fontPath = path.join(newProject.dataPath, "font.ttf");
+                        newProject.dataPath = path.join(ETConstants.PROJECT_DATA_DIR_PATH, newProject.name);
+                        newProject.fontPath = path.join(newProject.dataPath, ETConstants.PROJECT_FONT_NAME);
+                        newProject.fontType = fontType;
 
                         try {
                             // Make sure the main data directory exists.
-                            if (!fs.existsSync(ProjectService.DATA_DIR_PATH))
-                                fs.mkdirSync(ProjectService.DATA_DIR_PATH);
+                            if (!fs.existsSync(ETConstants.PROJECT_DATA_DIR_PATH))
+                                fs.mkdirSync(ETConstants.PROJECT_DATA_DIR_PATH);
 
                             // Create a data directory for the project.
                             fs.mkdirSync(newProject.dataPath);
@@ -249,7 +235,7 @@ export class ProjectService {
     private saveProjects(projects: ETProjects): Observable<void> {
         return Observable.create(listener => {
             if (projects != null) {
-                fs.writeFile(ProjectService.PROJECTS_FILE_PATH, JSON.stringify(projects), {encoding: 'utf8'},
+                fs.writeFile(ETConstants.PROJECTS_SAVE_FILE_PATH, JSON.stringify(projects), {encoding: 'utf8'},
                     err => {
                         if (err) {
                             listener.error(err.message);
@@ -275,7 +261,7 @@ export class ProjectService {
     private isProjectNameUnique(projectName: string, excludedProject?: ETProject): Observable<boolean> {
         return Observable.create(listener => {
             // Check reserved names.
-            if (ProjectService.RESERVED_NAMES.includes(projectName.toUpperCase())) {
+            if (ETConstants.PROJECT_RESERVED_NAMES.includes(projectName.toUpperCase())) {
                 listener.error("This name is reserved and cannot be used.");
                 listener.complete();
                 return;

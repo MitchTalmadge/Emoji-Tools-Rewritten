@@ -22,7 +22,9 @@ import {ETProject} from "../../models/project.model";
 import {Observable} from "rxjs/Observable";
 import * as path from "path";
 import {FontType} from "../../models/font-type.enum";
-const fs = require("fs-extra");
+import {ETConstants} from "../../util/constants";
+import * as fs from "fs-extra";
+import {FontTable} from "../../models/font-table.enum";
 
 @Injectable()
 export class EmojiService {
@@ -78,11 +80,11 @@ export class EmojiService {
             // 0% Complete
             listener.next(0);
 
-            // Create a path for the new ttx file.
-            let ttxPath = path.join(project.dataPath, "font.ttx");
+            // Path for the new ttx files.
+            let ttxDirPath = path.join(project.dataPath, ETConstants.PROJECT_TTX_DIR_NAME);
 
             // Convert the font file to ttx.
-            let conversionSubscription = this.fontToolsService.convertTTFtoTTX(project.fontPath, ttxPath)
+            let conversionSubscription = this.fontToolsService.convertTTFtoTTX(project.fontPath, ttxDirPath)
                 .subscribe(
                     progress => {
                         listener.next((progress / 100) * 50);
@@ -94,17 +96,18 @@ export class EmojiService {
                         // 50% Complete
                         listener.next(50);
 
-                        // Assign the ttx path to the project.
-                        project.ttxPath = ttxPath;
+                        // Assign the ttx dir path to the project.
+                        project.ttxDirPath = ttxDirPath;
 
                         try {
                             // Create a directory for extraction.
-                            let extractionPath = path.join(project.dataPath, "extraction");
-                            if (fs.existsSync(extractionPath))
-                                fs.rmdirSync(extractionPath);
-                            fs.mkdirSync(extractionPath);
+                            let extractionPath = path.join(project.dataPath, ETConstants.PROJECT_EMOJI_EXTRACTION_DIR_NAME);
+                            fs.removeSync(extractionPath);
+                            fs.ensureDirSync(extractionPath);
 
                             // Start extracting
+                            if(project.fontType === FontType.ANDROID) {
+                            }
                             let xmlParser = new DOMParser();
 
 
@@ -113,7 +116,7 @@ export class EmojiService {
                             listener.next(100);
                             listener.complete();
                         } catch (err) {
-                            project.ttxPath = null;
+                            project.ttxDirPath = null;
                             project.extractionPath = null;
                             listener.error(err);
                         }

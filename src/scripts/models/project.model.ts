@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Moment} from "moment/moment";
 import {FontType} from "./font-type.enum";
 
 /**
@@ -45,9 +44,9 @@ export interface ETProject {
     fontType?: FontType
 
     /**
-     * The path to the project's ttx font file, which is within its data directory.
+     * The path to the project's ttx directory, containing the individual ttx table files.
      */
-    ttxPath?: string
+    ttxDirPath?: string
 
     /**
      * The path to the extracted Emojis directory within the project's data directory.

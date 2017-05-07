@@ -16,29 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const isDev = require('electron-is-dev');
-const {shell, remote} = require('electron');
-const userDataPath = remote.app.getPath('userData');
+import { NgModule } from '@angular/core';
+import {cmapTableService} from "./cmap.table.service";
 
-export class Electron {
-
-    /**
-     * Determines if Electron is currently running in dev mode.
-     */
-    public static isDevModeEnabled(): boolean {
-        return isDev;
-    }
-
-    public static getUserDataPath(): string {
-        return userDataPath;
-    }
-
-    /**
-     * Opens a link in the user's default web browser.
-     * @param url The url to open.
-     */
-    public static openExternalLink(url: string): void {
-        shell.openExternal(url);
-    }
-
-}
+@NgModule({
+    imports: [],
+    exports: [],
+    declarations: [],
+    providers: [
+        cmapTableService
+    ],
+})
+export class TablesServiceModule { }

@@ -20,12 +20,17 @@ import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 import {Electron} from "../../util/electron";
 import {Logger} from "../../util/logger";
-import * as fs from "fs";
 import {Subscription} from "rxjs/Subscription";
+import * as path from "path";
+import {ETConstants} from "../../util/constants";
+import {FontTable} from "../../models/font-table.enum";
 const child_process = require("child_process");
+const fs = require("fs-extra");
 
 @Injectable()
 export class FontToolsService {
+
+    private static readonly TTX_FILE_NAME = "font.ttx";
 
     /**
      * Retrieves the names of the tables within the font file.
@@ -53,7 +58,7 @@ export class FontToolsService {
                     let tableNames: string[] = [];
 
                     // Search for names until the search returns null.
-                    while((tableSearch = searchPattern.exec(message)) != null) {
+                    while ((tableSearch = searchPattern.exec(message)) != null) {
                         // Append the found name.
                         tableNames.push(tableSearch[1]);
                     }
@@ -75,13 +80,55 @@ export class FontToolsService {
     }
 
     /**
+     * Gets the ttx file path for the given table.
+     * @param table The table to get the path for.
+     * @param ttxDirPath The path to the ttx directory containing the ttx files.
+     * @returns A Promise that gives the path to the ttx file being sought, or rejects if it could not be found.
+     */
+    public getTTXPathForTable(table: FontTable, ttxDirPath: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            let ttxFilePath = path.join(ttxDirPath, ETConstants.PROJECT_TTX_FILE_NAME);
+
+            if (!fs.existsSync(ttxFilePath)) {
+                reject("The TTX file is missing.");
+                return;
+            }
+
+            let tablePath: string;
+
+            try {
+                let xmlParser = new DOMParser();
+                let ttxContents = fs.readFileSync(ttxFilePath);
+                let ttxDoc = xmlParser.parseFromString(ttxContents, "text/xml");
+
+                let tableElement = ttxDoc.getElementsByTagName(table.toString());
+                if (tableElement.length == 1) {
+                    tablePath = path.join(ttxDirPath, tableElement[0]['src']);
+                }
+            } catch (err) {
+                reject(err);
+                return;
+            }
+
+            if (tablePath == null) {
+                reject("The table was not found.");
+            } else {
+                resolve(tablePath);
+            }
+        });
+    }
+
+    /**
      * Converts a TTF file to a TTX file.
-     * @param ttfPath The path to the TTF.
-     * @param ttxPath The path to store the TTX.
+     * @param ttfPath The path to the TTF file.
+     * @param ttxPath The path to a directory to store the TTX files in.
      * @returns An Observable that emits progress (0 through 100) or an error.
      */
     public convertTTFtoTTX(ttfPath: string, ttxPath: string): Observable<number> {
         return Observable.create(listener => {
+
+            // Create ttxDirPath.
+            fs.ensureDirSync(ttxPath);
 
             // The subscription that should be un-subscribed from upon cancellation.
             let subscription: Subscription;
@@ -89,15 +136,14 @@ export class FontToolsService {
             //Step 1: Figure out how many tables there are, so we can keep track of progress while converting.
             this.getFontTableNames(ttfPath)
                 .then(tableNames => {
-                    Logger.logInfo("Found " + tableNames.length + " tables.", this);
-
                     // Step 2: Convert, and update listener with progress.
+                    Logger.logInfo("Found " + tableNames.length + " tables.", this);
 
                     // The number of tables that have been dumped to ttx file.
                     let dumpedTablesCount = 0;
 
-                    // Output flag, output path, input path.
-                    subscription = FontToolsService.runFontTools(['-o', ttxPath, ttfPath]).subscribe(
+                    // Force overwrite flag, split flag, output flag, output path, input path.
+                    subscription = FontToolsService.runFontTools(['-f', '-s', '-o', path.join(ttxPath, ETConstants.PROJECT_TTX_FILE_NAME), ttfPath]).subscribe(
                         message => {
                             Logger.logInfo(message, this);
                             if (message.match(/^Dumping '.+' table/g) != null)
@@ -135,7 +181,7 @@ export class FontToolsService {
         let cwd = Electron.isDevModeEnabled() ? 'build/prod/python' : 'resources/app/python';
 
         return Observable.create(listener => {
-            Logger.logInfo("[FontToolsService] Starting Font Tools with command: python fontToolsRunner.py, args: [" + args + "]");
+            Logger.logInfo("Starting Font Tools with command: python fontToolsRunner.py, args: [" + args + "]", this);
             // Run Python
             let child = child_process.spawn("python", ['fontToolsRunner.py', '-e', ...args], {cwd: cwd});
             // Configure stdout
@@ -152,7 +198,7 @@ export class FontToolsService {
                     // Kill the process
                     child.kill("SIGINT");
                     // Log failure.
-                    Logger.logError("[FontToolsService] Font Tools failed due to an error.");
+                    Logger.logError("Font Tools failed due to an error.", this);
                     return;
                 }
 
@@ -163,7 +209,7 @@ export class FontToolsService {
                 if (exitCode != 0)
                     listener.error("Font Tools did not complete successfully. Exit code: " + exitCode);
                 else
-                    Logger.logInfo("[FontToolsService] Font Tools completed with exit code " + exitCode);
+                    Logger.logInfo("Font Tools completed with exit code " + exitCode, this);
                 listener.complete();
             });
 
