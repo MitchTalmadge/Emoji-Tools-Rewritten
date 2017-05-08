@@ -15,20 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import {ETGSUBLigatureSet} from "./ligature-set.gsub.model";
 
-import { NgModule } from '@angular/core';
-import {cmapTableService} from "./cmap.table.service";
-import {CBDTTableService} from "./cbdt.table.service";
-import {GSUBTableService} from "./gsub.table.service";
+/**
+ * Represents a single Ligature in the GSUB Table.
+ */
+export interface ETGSUBLigature {
 
-@NgModule({
-    imports: [],
-    exports: [],
-    declarations: [],
-    providers: [
-        CBDTTableService,
-        cmapTableService,
-        GSUBTableService
-    ],
-})
-export class TablesServiceModule { }
+    /**
+     * A reference to this Ligature's set.
+     */
+    ligatureSet?: ETGSUBLigatureSet;
+
+    /**
+     * The individual component names.
+     */
+    components?: string[];
+
+    /**
+     * The Ligature's glyph name as used in the CBDT Table.
+     */
+    glyphName?: string;
+
+}

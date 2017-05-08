@@ -18,7 +18,7 @@
 
 import {Injectable} from "@angular/core";
 import {FontToolsService} from "../font-tools.service";
-import {ETCBDTImageData} from "../../../models/tables/CBDT/image-data.cbdt.model";
+import {ETCBDTGlyphData} from "../../../models/tables/CBDT/image-data.cbdt.model";
 import {Observable} from "rxjs/Observable";
 import {ETFontTable} from "../../../models/tables/font-table.enum";
 import * as fs from "fs-extra";
@@ -37,12 +37,11 @@ export class CBDTTableService {
     }
 
     /**
-     * Extracts image data from the CBDT table.
+     * Determines the number of glyphs in the CBDT table.
      * @param ttxDirPath The path to the ttx directory.
-     * @returns An Observable that gives the data for one glyph at a time.
      */
-    public extractImageData(ttxDirPath: string): Observable<ETCBDTImageData> {
-        return Observable.create(listener => {
+    public determineNumberOfGlyphs(ttxDirPath: string): Promise<number> {
+        return new Promise((resolve, reject) => {
             this.fontToolsService.getTTXPathForTable(ETFontTable.CBDT, ttxDirPath)
                 .then(cbdtPath => {
                     // Read table line by line.
@@ -50,7 +49,7 @@ export class CBDTTableService {
                         input: fs.createReadStream(cbdtPath, 'utf8')
                     });
 
-                    let imageData: ETCBDTImageData;
+                    let numGlyphs = 0;
 
                     // For each line...
                     cbdtReader.on('line', (line: string) => {
@@ -59,15 +58,55 @@ export class CBDTTableService {
                         // Look for format header
                         let matcher = CBDTTableService.FORMAT_17_MATCHER.exec(line);
                         if (matcher != null) {
-                            imageData = {};
-                            imageData.format = 17;
-                            imageData.name = matcher[1];
-                            imageData.data = [];
+                            numGlyphs++;
+                        }
+                    });
+
+                    // Cleanup on close.
+                    cbdtReader.on('close', () => {
+                        resolve(numGlyphs);
+                    });
+                })
+                .catch(err => {
+                    Logger.logError("CBDT Table not found: " + err, this);
+                    reject("Could not determine number of glyphs; CBDT Table not found.");
+                })
+        });
+    }
+
+    /**
+     * Extracts glyph and image data from the CBDT table.
+     * @param ttxDirPath The path to the ttx directory.
+     * @returns An Observable that gives the data for one glyph at a time.
+     */
+    public extractGlyphData(ttxDirPath: string): Observable<ETCBDTGlyphData> {
+        return Observable.create(listener => {
+            this.fontToolsService.getTTXPathForTable(ETFontTable.CBDT, ttxDirPath)
+                .then(cbdtPath => {
+                    // Read table line by line.
+                    let cbdtReader = readline.createInterface({
+                        input: fs.createReadStream(cbdtPath, 'utf8')
+                    });
+
+                    let glyphData: ETCBDTGlyphData;
+                    let imageData: number[];
+
+                    // For each line...
+                    cbdtReader.on('line', (line: string) => {
+                        line = line.trim();
+
+                        // Look for format header
+                        let matcher = CBDTTableService.FORMAT_17_MATCHER.exec(line);
+                        if (matcher != null) {
+                            glyphData = {};
+                            glyphData.format = 17;
+                            glyphData.name = matcher[1];
+                            imageData = [];
                             return;
                         }
 
                         // Only do these if header was encountered
-                        if (imageData != null) {
+                        if (glyphData != null) {
                             // Look for data
                             matcher = CBDTTableService.RAW_IMAGE_DATA_MATCHER.exec(line);
                             if (matcher != null) {
@@ -78,18 +117,22 @@ export class CBDTTableService {
                                 let splitData = data.match(CBDTTableService.HEX_SPLITTER);
 
                                 // Convert the hex to binary and put into the data.
-                                splitData.forEach(hexByte => imageData.data.push(parseInt(hexByte, 16)));
+                                splitData.forEach(hexByte => imageData.push(parseInt(hexByte, 16)));
                                 return;
                             }
 
                             // Look for the data closing tag.
                             matcher = CBDTTableService.RAW_IMAGE_DATA_END_MATCHER.exec(line);
                             if (matcher != null) {
+                                glyphData.imageData = new Uint8Array(imageData);
+
                                 // Send whatever we have.
-                                listener.next(imageData);
+                                listener.next(glyphData);
 
                                 // Reset.
+                                glyphData = null;
                                 imageData = null;
+                                return;
                             }
                         }
                     });

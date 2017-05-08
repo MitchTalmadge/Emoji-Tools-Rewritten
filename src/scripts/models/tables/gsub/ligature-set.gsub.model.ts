@@ -16,7 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface ETGSUBLigatureSets {
+import {ETGSUBLigature} from "./ligature.gsub.model";
 
+/**
+ * Represents a single Ligature Set in the GSUB Table.
+ */
+export interface ETGSUBLigatureSet {
+
+    /**
+     * The name of this set's glyph..
+     */
+    glyphName?: string;
+
+    /**
+     * The ligatures of this set in order of appearance in the Set.
+     */
+    ligatures?: ETGSUBLigature[];
 
 }

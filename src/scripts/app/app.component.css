@@ -49,6 +49,11 @@
     user-select: none;
 }
 
+.et-text-selectable {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
 /* Notifications */
 
 .uk-notification {

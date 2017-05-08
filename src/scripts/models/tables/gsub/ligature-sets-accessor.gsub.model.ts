@@ -16,24 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ETGSUBLigatureSet} from "./ligature-set.gsub.model";
+import {ETGSUBLigatureSetsMap} from "./ligature-sets-map.gsub.model";
+import {ETGSUBLigaturesMap} from "./ligatures-map.gsub.model";
+
 /**
- * Represents a single glyph's image data in the CBDT table.
+ * Provides an entry point for accessing either Ligature Sets or Ligatures by glyph names, through maps;
+ * as well as the arrays themselves.
  */
-export interface ETCBDTGlyphData {
+export interface ETGSUBLigatureSetsAccessor {
 
     /**
-     * The format of the subtable that this image data originated from.
+     * All the Ligature Sets in order of appearance in the table.
      */
-    format?: number
+    ligatureSets?: ETGSUBLigatureSet[];
 
     /**
-     * The name of the glyph.
+     * A map for accessing Ligature Sets via Ligature Set glyph names.
      */
-    name?: string
+    ligatureSetsMap?: ETGSUBLigatureSetsMap;
 
     /**
-     * The raw image data.
+     * A map for accessing Ligatures via Ligature glyph names.
      */
-    imageData?: Uint8Array;
+    ligaturesMap?: ETGSUBLigaturesMap;
 
 }
