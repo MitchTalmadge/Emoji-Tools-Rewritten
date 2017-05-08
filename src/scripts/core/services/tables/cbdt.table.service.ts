@@ -18,12 +18,12 @@
 
 import {Injectable} from "@angular/core";
 import {FontToolsService} from "../font-tools.service";
-import {ETCBDTGlyphData} from "../../../models/tables/CBDT/image-data.cbdt.model";
 import {Observable} from "rxjs/Observable";
 import {ETFontTable} from "../../../models/tables/font-table.enum";
 import * as fs from "fs-extra";
 import * as readline from "readline";
 import {Logger} from "../../../util/logger";
+import {ETCBDTGlyphData} from "../../../models/tables/cbdt/image-data.cbdt.model";
 
 @Injectable()
 export class CBDTTableService {
