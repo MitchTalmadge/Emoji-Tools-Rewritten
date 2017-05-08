@@ -251,6 +251,37 @@ export class ProjectService {
     }
 
     /**
+     * Deletes a project.
+     * @param project The project to delete.
+     * @returns A Promise that resolves upon deletion.
+     */
+    public deleteProject(project: ETProject): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.projects.take(1).subscribe(
+                projects => {
+                    // Delete the project from the array.
+                    delete projects[project.name];
+
+                    // Remove the project's data directory.
+                    fs.removeSync(project.dataPath);
+
+                    // Save the array.
+                    this.saveProjects(projects)
+                        .subscribe(
+                            saved => {
+                                resolve();
+                            },
+                            err => {
+                                Logger.logError("Could not delete project by name " + project.name + ": " + err, this);
+                                reject("Could not delete project.");
+                            }
+                        )
+                }
+            )
+        });
+    }
+
+    /**
      * Determines if the project name is unique (not already used). Case-insensitive matching.
      * @param projectName The name of the project to check.
      * @param excludedProject A project which is excluded from checking.

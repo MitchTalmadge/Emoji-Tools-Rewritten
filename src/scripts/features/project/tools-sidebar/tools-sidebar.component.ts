@@ -16,8 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from "@angular/core";
 import {ETProject} from "../../../models/project.model";
+import {ProjectService} from "../../../core/services/project.service";
+import {Router} from "@angular/router";
+import {UIKit} from "../../../util/uikit";
 
 @Component({
     selector: 'et-project-tools-sidebar',
@@ -25,18 +28,36 @@ import {ETProject} from "../../../models/project.model";
 })
 export class ProjectToolsSidebarComponent implements OnInit {
 
+    /**
+     * The sidebar's associated project.
+     */
     @Input() project: ETProject;
 
-    constructor() { }
+    constructor(private projectService: ProjectService,
+                private router: Router) {
+    }
 
-    ngOnInit() { }
+    ngOnInit() {
+    }
 
+    /**
+     * When the Export Emojis link is clicked.
+     */
     onExportEmojis() {
 
     }
 
+    /**
+     * When the Delete Project link is clicked.
+     */
     onDeleteProject() {
-
+        this.projectService.deleteProject(this.project)
+            .then(
+                () => {
+                    this.router.navigate(['']);
+                    UIKit.showSuccessNotification("The Project '" + this.project.name + "' has been deleted.");
+                }
+            )
     }
 
 }
