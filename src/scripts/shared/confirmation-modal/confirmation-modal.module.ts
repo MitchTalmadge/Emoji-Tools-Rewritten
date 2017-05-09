@@ -17,31 +17,23 @@
  */
 
 import {NgModule} from "@angular/core";
+
+import {ConfirmationModalComponent} from "./confirmation-modal.component";
 import {CommonModule} from "@angular/common";
-import {RouterModule} from "@angular/router";
-import {TooltipModule} from "./tooltip/tooltip.module";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {AlertModule} from "./alert/alert.module";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {ModalModule} from "./modal/modal.module";
-import {ConfirmationModalModule} from "./confirmation-modal/confirmation-modal.module";
+import {ModalModule} from "../modal/modal.module";
 
 @NgModule({
-    imports: [],
-    declarations: [],
-    exports: [
+    imports: [
         CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        RouterModule,
-        BrowserAnimationsModule,
-
-        AlertModule,
-        ConfirmationModalModule,
-        ModalModule,
-        TooltipModule,
+        ModalModule
+    ],
+    declarations: [
+        ConfirmationModalComponent
+    ],
+    exports: [
+        ConfirmationModalComponent
     ],
     providers: [],
 })
-export class SharedModule {
+export class ConfirmationModalModule {
 }

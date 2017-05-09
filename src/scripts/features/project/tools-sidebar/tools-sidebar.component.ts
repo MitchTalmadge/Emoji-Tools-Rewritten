@@ -16,11 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {ETProject} from "../../../models/project.model";
 import {ProjectService} from "../../../core/services/project.service";
 import {Router} from "@angular/router";
 import {UIKit} from "../../../util/uikit";
+import {ConfirmationModalComponent} from "../../../shared/confirmation-modal/confirmation-modal.component";
 
 @Component({
     selector: 'et-project-tools-sidebar',
@@ -33,6 +34,11 @@ export class ProjectToolsSidebarComponent implements OnInit {
      */
     @Input() project: ETProject;
 
+    /**
+     * The modal for confirming deletion of the project.
+     */
+    @ViewChild('projectDeletionModal') projectDeletionModal: ConfirmationModalComponent;
+
     constructor(private projectService: ProjectService,
                 private router: Router) {
     }
@@ -44,13 +50,20 @@ export class ProjectToolsSidebarComponent implements OnInit {
      * When the Export Emojis link is clicked.
      */
     onExportEmojis() {
-
     }
 
     /**
      * When the Delete Project link is clicked.
      */
-    onDeleteProject() {
+    onClickDeleteProject() {
+        // Open the confirmation modal.
+        this.projectDeletionModal.openModal();
+    }
+
+    /**
+     * Deletes the Project. (Called after confirmation)
+     */
+    deleteProject() {
         this.projectService.deleteProject(this.project)
             .then(
                 () => {

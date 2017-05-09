@@ -16,35 +16,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const UIkit = require("uikit");
+import {Component, EventEmitter, Output} from "@angular/core";
 
-/**
- * UIKit utility methods.
- */
-export class UIKit {
+@Component({
+    selector: 'et-modal',
+    templateUrl: 'modal.component.html'
+})
+export class ModalComponent {
 
-    public static showDefaultNotification(message: string) {
-        UIkit.notification(message);
+    /**
+     * Emitted when the modal is opened.
+     */
+    @Output() opened = new EventEmitter();
+
+    /**
+     * Emitted when the modal is closed.
+     */
+    @Output() closed = new EventEmitter();
+
+    /**
+     * Determines if the modal is open.
+     */
+    open: boolean = false;
+
+    /**
+     * Opens the modal.
+     */
+    public openModal() {
+        this.open = true;
+        this.opened.emit();
     }
 
-    public static showInfoNotification(message: string) {
-        UIkit.notification(message, {status: 'primary'});
-    }
-
-    public static showSuccessNotification(message: string) {
-        UIkit.notification(message, {status: 'success'});
-    }
-
-    public static showWarningNotification(message: string) {
-        UIkit.notification(message, {status: 'warning'});
-    }
-
-    public static showDangerNotification(message: string) {
-        UIkit.notification(message, {status: 'danger'});
-    }
-
-    public static showModal() {
-        UIkit.modal();
+    /**
+     * Closes the modal.
+     */
+    public closeModal() {
+        this.open = false;
+        this.closed.emit();
     }
 
 }

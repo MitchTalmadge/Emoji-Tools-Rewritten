@@ -16,35 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const UIkit = require("uikit");
+import {Component, Input, OnInit} from '@angular/core';
 
-/**
- * UIKit utility methods.
- */
-export class UIKit {
+@Component({
+    selector: 'et-modal-header',
+    templateUrl: 'modal-header.component.html'
+})
+export class ModalHeaderComponent implements OnInit {
 
-    public static showDefaultNotification(message: string) {
-        UIkit.notification(message);
+    /**
+     * A title to pre-fill into the header.
+     * Default: null.
+     */
+    @Input() title: string = null;
+
+    constructor() {
     }
 
-    public static showInfoNotification(message: string) {
-        UIkit.notification(message, {status: 'primary'});
+    ngOnInit() {
     }
-
-    public static showSuccessNotification(message: string) {
-        UIkit.notification(message, {status: 'success'});
-    }
-
-    public static showWarningNotification(message: string) {
-        UIkit.notification(message, {status: 'warning'});
-    }
-
-    public static showDangerNotification(message: string) {
-        UIkit.notification(message, {status: 'danger'});
-    }
-
-    public static showModal() {
-        UIkit.modal();
-    }
-
 }

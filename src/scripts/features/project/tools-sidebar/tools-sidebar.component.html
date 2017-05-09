@@ -21,10 +21,23 @@
         <h3>Tools</h3>
     </div>
     <div class="uk-card-body">
-        <button class="uk-button uk-button-text" (click)="onExportEmojis()">Export Emojis</button>
-        <et-tooltip class="uk-align-right" [message]="'Export the Emojis as PNG Images'"></et-tooltip>
+        <button class="uk-button uk-button-text"
+                (click)="onExportEmojis()">
+            Export Emojis
+        </button>
+        <et-tooltip class="uk-align-right"
+                    [message]="'Export the Emojis as PNG Images'"></et-tooltip>
     </div>
     <div class="uk-card-footer">
-        <button class="uk-button uk-button-link uk-text-muted" (click)="onDeleteProject()">Delete Project</button>
+        <button class="uk-button uk-button-link uk-text-muted"
+                (click)="onClickDeleteProject()">
+            Delete Project
+        </button>
     </div>
 </div>
+
+<et-confirmation-modal #projectDeletionModal [title]="'Project Deletion Confirmation'"
+                       (confirmed)="deleteProject()">
+    <p>Are you sure you want to delete the Project <span class="uk-text-bold">{{project.name}}</span>?</p>
+    <p style="font-style: italic">This action cannot be undone!</p>
+</et-confirmation-modal>
