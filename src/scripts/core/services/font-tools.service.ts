@@ -24,6 +24,7 @@ import {Subscription} from "rxjs/Subscription";
 import * as path from "path";
 import {ETConstants} from "../../util/constants";
 import {ETFontTable} from "../../models/tables/font-table.enum";
+import {ETFontType} from "../../models/font-type.enum";
 const child_process = require("child_process");
 const fs = require("fs-extra");
 
@@ -31,6 +32,39 @@ const fs = require("fs-extra");
 export class FontToolsService {
 
     private static readonly TTX_FILE_NAME = "font.ttx";
+
+    /**
+     * Determines the FontType for the font file at the given path.
+     * @param fontPath The path to the font file.
+     * @returns A Promise that gives the FontType, or rejects if the font is not of a known type (or is corrupted/invalid).
+     */
+    public determineFontType(fontPath: string): Promise<ETFontType> {
+        return new Promise((resolve, reject) => {
+            if (!fs.existsSync(fontPath)) {
+                reject("Font file not found.");
+                return;
+            }
+
+            this.getFontTableNames(fontPath)
+                .then(tableNames => {
+                    // Apple fonts include an sbix table for glyphs.
+                    if (tableNames.includes("sbix")) {
+                        resolve(ETFontType.APPLE);
+                    }
+                    // Google (Android) fonts include CBLC and CBDT tables for glyphs.
+                    else if (tableNames.includes("CBLC") && tableNames.includes("CBDT")) {
+                        resolve(ETFontType.ANDROID);
+                    }
+                    // Unrecognized font.
+                    else {
+                        reject("This font is unrecognized.");
+                    }
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
 
     /**
      * Retrieves the names of the tables within the font file.

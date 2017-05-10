@@ -30,7 +30,10 @@ app.on('ready', function () {
         frame: true,
         autoHideMenuBar: true,
         backgroundColor: '#f1f1f1',
-        show: false
+        show: false,
+        webPreferences: {
+            webSecurity: false
+        }
     });
 
     mainWindow.once('ready-to-show', () => {

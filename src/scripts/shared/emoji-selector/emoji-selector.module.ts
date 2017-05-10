@@ -16,8 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.uk-card-body {
-    /* 100% - Header - Padding */
-    height: calc(100% - 60px - 60px);
-    overflow-y: auto;
+import {NgModule} from "@angular/core";
+
+import {EmojiSelectorComponent} from "./emoji-selector.component";
+import {CommonModule} from "@angular/common";
+
+@NgModule({
+    imports: [
+        CommonModule
+    ],
+    declarations: [EmojiSelectorComponent],
+    exports: [],
+    providers: [],
+})
+export class EmojiSelectorModule {
 }

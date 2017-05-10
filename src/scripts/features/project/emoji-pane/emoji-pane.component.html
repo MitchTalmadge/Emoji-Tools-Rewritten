@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <!-- Emojis have not been extracted -->
+        <!-- Emojis are being extracted -->
         <div class="uk-flex uk-flex-middle uk-flex-center uk-height-1-1" *ngIf="isExtracting()">
             <div class="uk-grid uk-text-center">
                 <div class="uk-width-1-1">
@@ -43,6 +43,13 @@
                     <p>Remember: This could take a while! Be patient.</p>
                     <progress class="uk-progress" [value]="extractionProgress" max="100"></progress>
                 </div>
+            </div>
+        </div>
+
+        <!-- Emojis have been extracted -->
+        <div class="uk-grid">
+            <div class="uk-width-1-6 emoji-tile" *ngFor="let emoji of emojis">
+                <img [src]="emoji.imgSrcPath" alt="Emoji" />
             </div>
         </div>
 

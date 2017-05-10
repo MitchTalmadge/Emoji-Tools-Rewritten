@@ -16,8 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.uk-card-body {
-    /* 100% - Header - Padding */
-    height: calc(100% - 60px - 60px);
-    overflow-y: auto;
+import {Component, OnInit} from '@angular/core';
+
+@Component({
+    selector: 'et-emoji-selector',
+    templateUrl: 'emoji-selector.component.html'
+})
+export class EmojiSelectorComponent implements OnInit {
+    constructor() {
+    }
+
+    ngOnInit() {
+    }
 }

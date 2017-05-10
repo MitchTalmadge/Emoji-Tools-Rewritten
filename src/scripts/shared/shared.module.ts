@@ -25,6 +25,7 @@ import {AlertModule} from "./alert/alert.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ModalModule} from "./modal/modal.module";
 import {ConfirmationModalModule} from "./confirmation-modal/confirmation-modal.module";
+import {EmojiSelectorModule} from "./emoji-selector/emoji-selector.module";
 
 @NgModule({
     imports: [],
@@ -38,6 +39,7 @@ import {ConfirmationModalModule} from "./confirmation-modal/confirmation-modal.m
 
         AlertModule,
         ConfirmationModalModule,
+        EmojiSelectorModule,
         ModalModule,
         TooltipModule,
     ],

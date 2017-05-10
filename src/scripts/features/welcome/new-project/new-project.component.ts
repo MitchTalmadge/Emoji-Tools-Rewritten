@@ -22,9 +22,9 @@ import {ProjectService} from "../../../core/services/project.service";
 import {Router} from "@angular/router";
 import {ETFontType} from "../../../models/font-type.enum";
 import {Electron} from "../../../util/electron";
-import {EmojiService} from "../../../core/services/emoji.service";
 import {Logger} from "../../../util/logger";
 import {ETConstants} from "../../../util/constants";
+import {FontToolsService} from "../../../core/services/font-tools.service";
 const UIkit = require("uikit");
 
 @Component({
@@ -49,7 +49,7 @@ export class NewProjectComponent implements OnInit {
 
     constructor(private formBuilder: FormBuilder,
                 private projectService: ProjectService,
-                private emojiService: EmojiService,
+                private fontToolsService: FontToolsService,
                 private router: Router) {
     }
 
@@ -75,7 +75,7 @@ export class NewProjectComponent implements OnInit {
     onClickContinue() {
         // After step 0, detect font type.
         if (this.step == 0) {
-            this.emojiService.determineFontType(this.formGroup.controls['fontFile'].value['path'])
+            this.fontToolsService.determineFontType(this.formGroup.controls['fontFile'].value['path'])
                 .then(fontType => {
                     this.formGroup.controls['fontType'].setValue(fontType);
                     this.step = 1;

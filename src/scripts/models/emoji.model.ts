@@ -16,8 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.uk-card-body {
-    /* 100% - Header - Padding */
-    height: calc(100% - 60px - 60px);
-    overflow-y: auto;
+import {SafeUrl} from "@angular/platform-browser";
+/**
+ * Info for a single extracted Emoji.
+ */
+export interface ETEmoji {
+
+    /**
+     * The path to the extracted emoji file.
+     */
+    imagePath?: string;
+
+    /**
+     * A path to the extracted emoji that is safe for Angular to use in an img src.
+     */
+    imgSrcPath?: SafeUrl;
+
+    /**
+     * The unicodes that make up the Emoji.
+     */
+    codes?: string[];
+
 }

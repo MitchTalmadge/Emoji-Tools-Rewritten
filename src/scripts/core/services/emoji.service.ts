@@ -30,11 +30,14 @@ import {Logger} from "../../util/logger";
 import {GSUBTableService} from "./tables/gsub.table.service";
 import {ETcmapSubtable} from "../../models/tables/cmap/subtable.cmap.model";
 import {ProjectService} from "./project.service";
+import {ETEmoji} from "../../models/emoji.model";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Injectable()
 export class EmojiService {
 
     constructor(private projectService: ProjectService,
+                private domSanitizer: DomSanitizer,
                 private fontToolsService: FontToolsService,
                 private cmapTableService: cmapTableService,
                 private CBDTTableService: CBDTTableService,
@@ -42,35 +45,46 @@ export class EmojiService {
     }
 
     /**
-     * Determines the FontType for the font file at the given path.
-     * @param fontPath The path to the font file.
-     * @returns A Promise that gives the FontType, or rejects if the font is not of a known type (or is corrupted/invalid).
+     * Gets an array of extracted Emojis.
+     * Will throw an error if Emojis have not been extracted.
+     * @param project The project.
+     * @returns A Promise that gives the array of Emojis.
      */
-    public determineFontType(fontPath: string): Promise<ETFontType> {
+    public getExtractedEmojis(project: ETProject): Promise<ETEmoji[]> {
         return new Promise((resolve, reject) => {
-            if (!fs.existsSync(fontPath)) {
-                reject("Font file not found.");
+            if (project.extractionPath == null || !fs.existsSync(project.extractionPath)) {
+                reject("Cannot get extracted Emojis; Emojis have not yet been extracted.");
                 return;
             }
 
-            this.fontToolsService.getFontTableNames(fontPath)
-                .then(tableNames => {
-                    // Apple fonts include an sbix table for glyphs.
-                    if (tableNames.includes("sbix")) {
-                        resolve(ETFontType.APPLE);
-                    }
-                    // Google (Android) fonts include CBLC and CBDT tables for glyphs.
-                    else if (tableNames.includes("CBLC") && tableNames.includes("CBDT")) {
-                        resolve(ETFontType.ANDROID);
-                    }
-                    // Unrecognized font.
-                    else {
-                        reject("This font is unrecognized.");
-                    }
-                })
-                .catch(err => {
-                    reject(err);
-                });
+            // Get an array of the files from the extraction path.
+            let emojiFiles = fs.readdirSync(project.extractionPath);
+            let emojis: ETEmoji[] = [];
+
+            // For each file
+            emojiFiles.forEach(fileName => {
+                if (!fileName.endsWith(".png")) {
+                    Logger.logError("Found a non-Emoji file in the extraction dir: " + fileName, this);
+                    reject("Cannot get extracted Emojis; there was a non-Emoji file in the extraction directory: " + fileName);
+                }
+
+                // Make an Emoji
+                let emoji: ETEmoji = {};
+
+                // Assign the Emoji path
+                emoji.imagePath = path.join(project.extractionPath, fileName);
+
+                // Assign the SafeUrl Emoji path for Angular.
+                emoji.imgSrcPath = this.domSanitizer.bypassSecurityTrustUrl(emoji.imagePath);
+
+                // Remove the extension and split the name to get the codes
+                emoji.codes = fileName.replace('.png', '').split("_");
+
+                // Add the Emoji to the array.
+                emojis.push(emoji);
+            });
+
+            resolve(emojis);
         });
     }
 

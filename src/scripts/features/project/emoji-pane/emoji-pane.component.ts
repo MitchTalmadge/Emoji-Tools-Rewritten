@@ -21,6 +21,8 @@ import {ETProject} from "../../../models/project.model";
 import {EmojiService} from "../../../core/services/emoji.service";
 import {AlertComponent} from "../../../shared/alert/alert.component";
 import {Subscription} from "rxjs/Subscription";
+import {ETEmoji} from "../../../models/emoji.model";
+import {Logger} from "../../../util/logger";
 
 @Component({
     selector: 'et-project-emoji-pane',
@@ -34,6 +36,9 @@ export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
      */
     @Input() project: ETProject;
 
+    /**
+     * An alert at the top of the component used for various messages.
+     */
     @ViewChild(AlertComponent) alert: AlertComponent;
 
     /**
@@ -53,16 +58,36 @@ export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
      */
     extractionProgress: number = 0;
 
+    /**
+     * The extracted emojis.
+     */
+    emojis: ETEmoji[] = [];
+
     constructor(private emojiService: EmojiService) {
     }
 
     ngOnInit() {
+        this.loadEmojis();
     }
 
     ngOnDestroy() {
         // Stop extraction.
         if (this.isExtracting()) {
             this.extractionSubscription.unsubscribe();
+        }
+    }
+
+    /**
+     * Loads the array of Emojis into the emojis field if they have been extracted.
+     */
+    loadEmojis() {
+        if (this.project != null && this.project.extractionPath != null) {
+            this.emojiService.getExtractedEmojis(this.project).then(
+                emojis => this.emojis = emojis,
+                err => {
+                    Logger.logError("Couldn't load Emojis: " + err);
+                }
+            )
         }
     }
 
@@ -83,6 +108,7 @@ export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
                     },
                     () => {
                         this.alert.displaySuccessMessage("Emojis Extracted Successfully!");
+                        this.loadEmojis();
                     }
                 );
         }
