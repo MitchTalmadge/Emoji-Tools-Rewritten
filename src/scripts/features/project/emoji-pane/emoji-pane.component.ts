@@ -85,7 +85,7 @@ export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
             this.emojiService.getExtractedEmojis(this.project).then(
                 emojis => this.emojis = emojis,
                 err => {
-                    Logger.logError("Couldn't load Emojis: " + err);
+                    Logger.logError("Couldn't load Emojis: " + err, this);
                 }
             )
         }

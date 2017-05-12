@@ -17,8 +17,13 @@
  */
 
 import { Injectable } from '@angular/core';
-import * as fs from "fs-extra";
 import {Observable} from "rxjs/Observable";
+import * as fs from "fs-extra";
+import {Logger} from "../../util/logger";
+import * as path from "path";
+import * as pngExtractor from "png-chunks-extract";
+import * as pngEncoder from "png-chunks-encode";
+import {ETCgBIPNGChunks} from "../../models/cgbi/png-chunks.cgbi.model";
 
 /**
  * Methods for working with CgBI images, commonly found in iOS Emoji fonts.
@@ -35,6 +40,33 @@ export class CgBIService {
      */
     public convertCgBIToRGBA(imagesPath: string): Observable<number> {
         return Observable.create(listener => {
+            let fileNames = fs.readdirSync(imagesPath);
+            fileNames.forEach(fileName => {
+                if(!fileName.endsWith(".png")) {
+                    Logger.logError("Found a non-png file while converting. Skipping.", this);
+                } else {
+                    // Read the PNG File
+                    fs.readFile(path.join(imagesPath, fileName), (err, data) => {
+                        // Check for errors
+                        if(err) {
+                            Logger.logError("Could not read PNG File: "+err, this);
+                        } else {
+                            let chunks = pngExtractor(data);
+                            console.log(chunks);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    /**
+     * Reads the Chunks from a PNG file.
+     * @param pngFilePath The path to the PNG.
+     * @returns A Promise that gives the Chunks.
+     */
+    private readChunksFromPNG(pngFilePath: string): Promise<ETCgBIPNGChunks> {
+        return new Promise<ETCgBIPNGChunks>((resolve, reject) => {
 
         });
     }

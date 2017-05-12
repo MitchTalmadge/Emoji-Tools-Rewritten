@@ -33,6 +33,7 @@ import {ProjectService} from "./project.service";
 import {ETEmoji} from "../../models/emoji.model";
 import {DomSanitizer} from "@angular/platform-browser";
 import {sbixTableService} from "./tables/sbix.table.service";
+import {CgBIService} from "./cgbi.service";
 
 @Injectable()
 export class EmojiService {
@@ -43,7 +44,8 @@ export class EmojiService {
                 private cmapTableService: cmapTableService,
                 private CBDTTableService: CBDTTableService,
                 private GSUBTableService: GSUBTableService,
-                private sbixTableService: sbixTableService) {
+                private sbixTableService: sbixTableService,
+                private CgBIService: CgBIService) {
     }
 
     /**
@@ -143,7 +145,7 @@ export class EmojiService {
                                                     listener.next((50 + ((progress / 100) * 50)) | 0);
                                                 },
                                                 err => {
-                                                    Logger.logError("Could not extract emojis: " + err);
+                                                    Logger.logError("Could not extract emojis: " + err, this);
                                                     listener.error("Extraction was unsuccessful.");
                                                 },
                                                 () => {
@@ -177,7 +179,7 @@ export class EmojiService {
                                                     listener.next((50 + ((progress / 100) * 50)) | 0);
                                                 },
                                                 err => {
-                                                    Logger.logError("Could not extract emojis: " + err);
+                                                    Logger.logError("Could not extract emojis: " + err, this);
                                                     listener.error("Extraction was unsuccessful.");
                                                 },
                                                 () => {
@@ -204,12 +206,12 @@ export class EmojiService {
                                             );
                                         break;
                                     /*default:
-                                        Logger.logError("Tried to extract emojis for an unsupported font type: " + ETFontType[project.fontType], this);
-                                        listener.error("Support for this font type is not available.");*/
+                                     Logger.logError("Tried to extract emojis for an unsupported font type: " + ETFontType[project.fontType], this);
+                                     listener.error("Support for this font type is not available.");*/
                                 }
                             })
                             .catch(err => {
-                                Logger.logError("Could not get subtable from cmap: " + err);
+                                Logger.logError("Could not get subtable from cmap: " + err, this);
                                 listener.error("Extraction failed while reading cmap table.");
                             });
                     }
@@ -287,7 +289,7 @@ export class EmojiService {
                                                 listener.next(((currentImage / numGlyphs) * 100) | 0);
                                             },
                                             err => {
-                                                Logger.logError("Could not extract emojis: " + err);
+                                                Logger.logError("Could not extract emojis: " + err, this);
                                                 listener.error(err);
                                             },
                                             () => {
@@ -300,14 +302,14 @@ export class EmojiService {
                             )
                             .catch(
                                 err => {
-                                    Logger.logError("Could not determine number of glyphs in CBDT Table: " + err);
+                                    Logger.logError("Could not determine number of glyphs in CBDT Table: " + err, this);
                                     listener.error("Could not determine the number of glyphs to extract.");
                                 }
                             );
                     })
                 .catch(
                     err => {
-                        Logger.logError("Could not get ligature sets")
+                        Logger.logError("Could not get ligature sets", this)
                     }
                 );
 
@@ -373,23 +375,37 @@ export class EmojiService {
                                     }
 
                                     // Update progress.
-                                    listener.next(((currentImage / numGlyphs) * 100) | 0);
+                                    listener.next(((currentImage / numGlyphs) * 50) | 0);
                                 },
                                 err => {
-                                    Logger.logError("Could not extract emojis: " + err);
+                                    Logger.logError("Could not extract emojis: " + err, this);
                                     listener.error(err);
                                 },
                                 () => {
-                                    // Complete
-                                    listener.next(100);
-                                    listener.complete();
+                                    // After extraction, convert from CgBI to RGBA
+                                    this.CgBIService.convertCgBIToRGBA(extractionPath)
+                                        .subscribe(
+                                            progress => {
+                                                // Update progress.
+                                                listener.next((50 + (progress * 0.5)) | 0);
+                                            },
+                                            err => {
+                                                Logger.logError("Could not convert from CgBI to RGBA: " + err, this);
+                                                listener.error("Extraction failed while converting CgBI images to RGBA.");
+                                            },
+                                            () => {
+                                                // Complete
+                                                listener.next(100);
+                                                listener.complete();
+                                            }
+                                        );
                                 }
                             );
                     }
                 )
                 .catch(
                     err => {
-                        Logger.logError("Could not determine number of glyphs in sbix Table: " + err);
+                        Logger.logError("Could not determine number of glyphs in sbix Table: " + err, this);
                         listener.error("Could not determine the number of glyphs to extract.");
                     }
                 );

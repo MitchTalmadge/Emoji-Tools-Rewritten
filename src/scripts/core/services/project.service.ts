@@ -51,7 +51,7 @@ export class ProjectService {
             try {
                 projects = JSON.parse(data);
             } catch (err) {
-                Logger.logError("Could not read projects file: " + err);
+                Logger.logError("Could not read projects file: " + err, this);
                 this.saveProjects({}).subscribe(
                     () => this.projects.next({})
                 );
@@ -60,7 +60,7 @@ export class ProjectService {
 
             this.projects.next(projects);
         } else {
-            Logger.logInfo("Projects file does not exist. Creating...");
+            Logger.logInfo("Projects file does not exist. Creating...", this);
             this.saveProjects({}).subscribe(
                 () => this.projects.next({})
             );
@@ -101,7 +101,7 @@ export class ProjectService {
      * @returns An Observable that returns the saved project, or throws an error if saving did not succeed.
      */
     public renameProject(currentName: string, newName: string): Observable<ETProject> {
-        Logger.logInfo("Renaming project " + currentName + " to " + newName);
+        Logger.logInfo("Renaming project " + currentName + " to " + newName, this);
         newName = newName.trim();
 
         return Observable.create(listener => {
@@ -209,7 +209,7 @@ export class ProjectService {
      * @returns An Observable that will emit the saved project once it has been saved (or may emit an error if the saving failed.)
      */
     public saveProject(project: ETProject): Observable<ETProject> {
-        Logger.logInfo("Saving project: " + project.name);
+        Logger.logInfo("Saving project: " + project.name, this);
 
         return Observable.create(listener => {
             this.projects.take(1).subscribe(
@@ -236,8 +236,8 @@ export class ProjectService {
                 fs.writeFile(ETConstants.PROJECTS_SAVE_FILE_PATH, JSON.stringify(projects), {encoding: 'utf8'},
                     err => {
                         if (err) {
+                            Logger.logError("Error while saving Projects: " + err, this);
                             listener.error(err.message);
-                            console.log("Error while saving Projects: " + err);
                         } else {
                             this.loadProjects();
                             listener.next();

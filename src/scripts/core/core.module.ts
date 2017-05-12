@@ -25,6 +25,7 @@ import {EmojiService} from "./services/emoji.service";
 import {FontToolsService} from "./services/font-tools.service";
 import {TablesServiceModule} from "./services/tables/tables.module";
 import {ErrorService} from "./services/error.service";
+import {CgBIService} from "./services/cgbi.service";
 
 @NgModule({
     imports: [
@@ -39,6 +40,7 @@ import {ErrorService} from "./services/error.service";
             provide: ErrorHandler,
             useClass: EmojiToolsErrorHandler
         },
+        CgBIService,
         EmojiService,
         ErrorService,
         FontToolsService,

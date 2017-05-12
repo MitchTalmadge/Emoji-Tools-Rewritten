@@ -30,10 +30,10 @@ export class Logger {
     /**
      * Logs an info message to the console and log file.
      * @param message The message to log.
-     * @param reportingObject The object or class that is reporting this message.
+     * @param origin The object which is calling this method.
      */
-    public static logInfo(message: string, reportingObject?: Object) {
-        let finalMessage = "[INFO] " + (reportingObject != null ? "[" + reportingObject.constructor.name + "] " : "") + message;
+    public static logInfo(message: string, origin: Object) {
+        let finalMessage = "[INFO] [" + origin.constructor.name + "] " + message;
         log(finalMessage);
         console.log(finalMessage);
     }
@@ -41,10 +41,10 @@ export class Logger {
     /**
      * Logs an error message to the console and log file.
      * @param message The message to log.
-     * @param reportingObject The object or class that is reporting this message.
+     * @param origin The object which is calling this method.
      */
-    public static logError(message: string, reportingObject?: Object) {
-        let finalMessage = "[ERROR] " + (reportingObject != null ? "[" + reportingObject.constructor.name + "] " : "") + message;
+    public static logError(message: string, origin: Object) {
+        let finalMessage = "[ERROR] [" + origin.constructor.name + "] " + message;
         log(finalMessage);
         console.error(finalMessage);
     }
