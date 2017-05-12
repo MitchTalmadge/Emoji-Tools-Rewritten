@@ -25,6 +25,8 @@ import {Electron} from "../../../util/electron";
 import {Logger} from "../../../util/logger";
 import {ETConstants} from "../../../util/constants";
 import {FontToolsService} from "../../../core/services/font-tools.service";
+import {DomSanitizer} from "@angular/platform-browser";
+import {sanitizeHtml} from "@angular/platform-browser/src/security/html_sanitizer";
 const UIkit = require("uikit");
 
 @Component({
@@ -50,6 +52,7 @@ export class NewProjectComponent implements OnInit {
     constructor(private formBuilder: FormBuilder,
                 private projectService: ProjectService,
                 private fontToolsService: FontToolsService,
+                private sanitizer: DomSanitizer,
                 private router: Router) {
     }
 

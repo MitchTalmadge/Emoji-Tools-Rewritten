@@ -32,6 +32,7 @@ import {ETcmapSubtable} from "../../models/tables/cmap/subtable.cmap.model";
 import {ProjectService} from "./project.service";
 import {ETEmoji} from "../../models/emoji.model";
 import {DomSanitizer} from "@angular/platform-browser";
+import {sbixTableService} from "./tables/sbix.table.service";
 
 @Injectable()
 export class EmojiService {
@@ -41,7 +42,8 @@ export class EmojiService {
                 private fontToolsService: FontToolsService,
                 private cmapTableService: cmapTableService,
                 private CBDTTableService: CBDTTableService,
-                private GSUBTableService: GSUBTableService) {
+                private GSUBTableService: GSUBTableService,
+                private sbixTableService: sbixTableService) {
     }
 
     /**
@@ -168,9 +170,42 @@ export class EmojiService {
                                             );
                                         break;
                                     case ETFontType.APPLE:
-                                    default:
+                                        subscription = this.extractAppleEmojis(extractionPath, ttxDirPath, cmapSubtable)
+                                            .subscribe(
+                                                progress => {
+                                                    // Apple Extraction Progress
+                                                    listener.next((50 + ((progress / 100) * 50)) | 0);
+                                                },
+                                                err => {
+                                                    Logger.logError("Could not extract emojis: " + err);
+                                                    listener.error("Extraction was unsuccessful.");
+                                                },
+                                                () => {
+                                                    // Assign the extraction path to the project.
+                                                    project.extractionPath = extractionPath;
+
+                                                    // Assign the ttx dir path to the project.
+                                                    project.ttxDirPath = ttxDirPath;
+
+                                                    // Save the project.
+                                                    this.projectService.saveProject(project)
+                                                        .subscribe(
+                                                            project => {
+                                                                // Done!
+                                                                listener.next(100);
+                                                                listener.complete();
+                                                            },
+                                                            err => {
+                                                                Logger.logError("Could not save project after extraction: " + err, this);
+                                                                listener.error("Could not save project after extraction.");
+                                                            }
+                                                        );
+                                                }
+                                            );
+                                        break;
+                                    /*default:
                                         Logger.logError("Tried to extract emojis for an unsupported font type: " + ETFontType[project.fontType], this);
-                                        listener.error("Support for this font type is not available.");
+                                        listener.error("Support for this font type is not available.");*/
                                 }
                             })
                             .catch(err => {
@@ -276,6 +311,88 @@ export class EmojiService {
                     }
                 );
 
+        });
+    }
+
+    /**
+     * Extracts Emojis from an Apple font.
+     * @param extractionPath The path to extract emojis into.
+     * @param ttxDirPath The path to the ttx directory.
+     * @param cmapSubtable The cmap subtable for this font.
+     * @returns An Observable that reports progress, 0 through 100.
+     */
+    private extractAppleEmojis(extractionPath: string, ttxDirPath: string, cmapSubtable: ETcmapSubtable): Observable<number> {
+        return Observable.create(listener => {
+            // 0% complete.
+            listener.next(0);
+
+            // Get the number of glyphs, for progress reporting.
+            this.sbixTableService.determineNumberOfGlyphs(ttxDirPath)
+                .then(
+                    numGlyphs => {
+                        Logger.logInfo("Extracting " + numGlyphs + " glyphs.", this);
+                        let currentImage = 0;
+
+                        // Apple stores their images in the sbix table.
+                        // Since it is so large, we read it as a stream - one image at a time.
+                        this.sbixTableService.extractGlyphData(ttxDirPath)
+                            .subscribe(
+                                imageData => {
+                                    currentImage++;
+
+                                    Logger.logInfo("Extracting Glyph " + currentImage + " of " + numGlyphs + ": " + imageData.name, this);
+
+                                    // Look for the glyph in the cmap table.
+                                    if (cmapSubtable.names.includes(imageData.name)) {
+                                        // Create a file name from the code of the glyph.
+                                        let fileName = cmapSubtable.codes[cmapSubtable.names.indexOf(imageData.name)] + ".png";
+
+                                        // Write the image.
+                                        this.writeImageFile(imageData.imageData, path.join(extractionPath, fileName));
+                                    }
+                                    /*// If not found in cmap, look in GSUB.
+                                     else if (ligatureSetsAccessor.ligaturesMap[imageData.name] != null) {
+                                     let ligature = ligatureSetsAccessor.ligaturesMap[imageData.name];
+                                     let glyphNames = [];
+
+                                     // Add the set's glyph first.
+                                     glyphNames.push(ligature.ligatureSet.glyphName);
+
+                                     // Then add all the components
+                                     glyphNames.push(...ligature.components);
+
+                                     // Convert names to codes, then join them with underscores and create a filename.
+                                     let fileName = glyphNames.map(name => cmapSubtable.codes[cmapSubtable.names.indexOf(name)]).join("_") + ".png";
+
+                                     // Write the image.
+                                     this.writeImageFile(imageData.imageData, path.join(extractionPath, fileName));
+                                     }*/
+                                    // If not found in either of those two, give up.
+                                    else {
+                                        Logger.logError("Found a glyph with no cmap or morx record: " + imageData.name + ". Skipping...", this);
+                                    }
+
+                                    // Update progress.
+                                    listener.next(((currentImage / numGlyphs) * 100) | 0);
+                                },
+                                err => {
+                                    Logger.logError("Could not extract emojis: " + err);
+                                    listener.error(err);
+                                },
+                                () => {
+                                    // Complete
+                                    listener.next(100);
+                                    listener.complete();
+                                }
+                            );
+                    }
+                )
+                .catch(
+                    err => {
+                        Logger.logError("Could not determine number of glyphs in sbix Table: " + err);
+                        listener.error("Could not determine the number of glyphs to extract.");
+                    }
+                );
         });
     }
 

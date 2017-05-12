@@ -20,6 +20,7 @@ import { NgModule } from '@angular/core';
 import {cmapTableService} from "./cmap.table.service";
 import {CBDTTableService} from "./cbdt.table.service";
 import {GSUBTableService} from "./gsub.table.service";
+import {sbixTableService} from "./sbix.table.service";
 
 @NgModule({
     imports: [],
@@ -28,7 +29,8 @@ import {GSUBTableService} from "./gsub.table.service";
     providers: [
         CBDTTableService,
         cmapTableService,
-        GSUBTableService
+        GSUBTableService,
+        sbixTableService
     ],
 })
 export class TablesServiceModule { }

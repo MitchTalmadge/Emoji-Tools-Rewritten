@@ -16,21 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.font-type {
-    color: #bbbbbb;
-    font-size: 100px;
-    background-color: #fff;
-    border: 1px dashed #ddd;
-}
+/**
+ * Represents a single glyph's image data in the sbix table.
+ */
+export interface ETsbixGlyphData {
 
-.font-type.active {
-    background-color: #f1f1f1;
-    border: 1px solid #f1f1f1;
-    color: #666;
-}
+    /**
+     * The graphic type of this glyph.
+     */
+    graphicType?: string;
 
-#step0-ad {
-    width: 100%;
-    height: 150px;
-    margin-top: 20px;
+    /**
+     * The name of the glyph.
+     */
+    name?: string
+
+    /**
+     * The raw image data.
+     */
+    imageData?: Uint8Array;
+
 }
