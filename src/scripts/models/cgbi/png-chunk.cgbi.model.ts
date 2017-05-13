@@ -22,12 +22,19 @@ import {ETCgBIPNGChunkName} from "./png-chunk-name.cgbi.enum";
  */
 export interface ETCgBIPNGChunk {
 
+    /**
+     * The name of the Chunk.
+     */
     name?: ETCgBIPNGChunkName;
 
-    length?: string;
-
+    /**
+     * The Chunk's data.
+     */
     data?: Uint8Array;
 
+    /**
+     * The Chunk's CRC.
+     */
     crc?: Uint8Array;
 
 }

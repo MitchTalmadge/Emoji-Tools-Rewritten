@@ -16,6 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Names for the known chunks in the PNG file.
+ */
 export enum ETCgBIPNGChunkName {
 
     // Critical

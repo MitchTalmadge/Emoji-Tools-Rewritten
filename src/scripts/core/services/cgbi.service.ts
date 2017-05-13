@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from '@angular/core';
+import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 import * as fs from "fs-extra";
 import {Logger} from "../../util/logger";
 import * as path from "path";
-import * as pngExtractor from "png-chunks-extract";
-import * as pngEncoder from "png-chunks-encode";
 import {ETCgBIPNGChunks} from "../../models/cgbi/png-chunks.cgbi.model";
+import {ETCgBIPNGChunk} from "../../models/cgbi/png-chunk.cgbi.model";
+import {ETCgBIPNGChunkName} from "../../models/cgbi/png-chunk-name.cgbi.enum";
 
 /**
  * Methods for working with CgBI images, commonly found in iOS Emoji fonts.
@@ -31,7 +31,10 @@ import {ETCgBIPNGChunks} from "../../models/cgbi/png-chunks.cgbi.model";
 @Injectable()
 export class CgBIService {
 
-    constructor() { }
+    /**
+     * A Buffer that contains the 8 byte header that should be present on all PNG files.
+     */
+    private static readonly PNG_HEADER_BUFFER = new Buffer([137, 80, 78, 71, 13, 10, 26, 10]);
 
     /**
      * Converts CgBI-format PNG images to RGBA.
@@ -41,22 +44,33 @@ export class CgBIService {
     public convertCgBIToRGBA(imagesPath: string): Observable<number> {
         return Observable.create(listener => {
             let fileNames = fs.readdirSync(imagesPath);
-            fileNames.forEach(fileName => {
-                if(!fileName.endsWith(".png")) {
+            for (let i = 0; i < fileNames.length; i++) {
+                let fileName = fileNames[i];
+                if (!fileName.endsWith(".png")) {
                     Logger.logError("Found a non-png file while converting. Skipping.", this);
                 } else {
-                    // Read the PNG File
-                    fs.readFile(path.join(imagesPath, fileName), (err, data) => {
-                        // Check for errors
-                        if(err) {
-                            Logger.logError("Could not read PNG File: "+err, this);
-                        } else {
-                            let chunks = pngExtractor(data);
-                            console.log(chunks);
-                        }
-                    });
+                    let result = this.readChunksFromPNG(path.join(imagesPath, fileName))
+                        .then(chunks => {
+                            Logger.logInfo("Chunks for " + fileName + ": " + chunks, this);
+
+                            // Update progress.
+                            listener.next(((i / fileNames.length) * 100) | 0);
+                            return true;
+                        })
+                        .catch(err => {
+                            Logger.logError("Could not convert CgBI to RGBA; problem while reading Chunks on file " + fileName + ": " + err, this);
+                            listener.error("Could not read PNG Chunks: " + fileName);
+                            return false;
+                        });
+
+                    // Return if something went wrong.
+                    if (!result)
+                        return;
                 }
-            });
+            }
+
+            listener.next(100);
+            listener.complete();
         });
     }
 
@@ -67,8 +81,92 @@ export class CgBIService {
      */
     private readChunksFromPNG(pngFilePath: string): Promise<ETCgBIPNGChunks> {
         return new Promise<ETCgBIPNGChunks>((resolve, reject) => {
+                fs.open(pngFilePath, 'r', (err, fd) => {
+                    if (err) {
+                        Logger.logError("Could not open PNG file for reading: " + err, this);
+                        reject("Could not open PNG file.");
+                        return;
+                    }
 
-        });
+                    let chunks: ETCgBIPNGChunks = {};
+
+                    // Read header
+                    try {
+                        let headerBuffer = new Buffer(8);
+                        fs.readSync(fd, headerBuffer, 0, 8, 0);
+
+                        // Compare header to expected.
+                        if (headerBuffer.compare(CgBIService.PNG_HEADER_BUFFER) != 0) {
+                            Logger.logError("The provided file is not a valid PNG file; header does not match.", this);
+                            reject("Invalid PNG file.");
+                        }
+                    } catch (errHeader) {
+                        Logger.logError("Could not read PNG file header: " + err, this);
+                        reject("Could not read PNG file header.");
+                        return;
+                    }
+
+                    // Read chunks
+                    let currentChunk: ETCgBIPNGChunk = {};
+                    do {
+                        try {
+                            // ---- LENGTH ---- //
+
+                            // Read the chunk's data length
+                            let chunkLengthBuffer = new Buffer(4);
+                            fs.readSync(fd, chunkLengthBuffer, 0, chunkLengthBuffer.length, 0);
+                            let dataLength = chunkLengthBuffer.readInt8(0);
+
+                            // ---- NAME ---- //
+
+                            // Read the chunk's name
+                            let chunkNameBuffer = new Buffer(4);
+                            fs.readSync(fd, chunkNameBuffer, 0, chunkNameBuffer.length, 0);
+
+                            // Assign the name.
+                            let chunkName = chunkNameBuffer.toString("ASCII");
+                            currentChunk.name = ETCgBIPNGChunkName[chunkName];
+
+                            // Check if the name is known.
+                            if (currentChunk.name == null) {
+                                Logger.logError("Found a Chunk with an un-recognized name: " + chunkName, this);
+                                reject("Un-recognized Chunk found.");
+                                return;
+                            }
+
+                            // ---- DATA ---- //
+
+                            // Read the chunk's data
+                            let chunkDataBuffer = new Buffer(dataLength);
+                            fs.readSync(fd, chunkDataBuffer, 0, chunkDataBuffer.length, 0);
+
+                            // Assign the data
+                            currentChunk.data = new Uint8Array(chunkDataBuffer.length);
+
+                            // ---- CRC ---- //
+
+                            // Read the chunk's CRC
+                            let chunkCRCBuffer = new Buffer(4);
+                            fs.readSync(fd, chunkCRCBuffer, 0, chunkCRCBuffer.length, 0);
+
+                            // Assign the CRC
+                            currentChunk.crc = new Uint8Array(chunkCRCBuffer);
+
+                            // ---- CLEAN UP ---- //
+
+                            // Put the chunk into the map.
+                            chunks[chunkName] = currentChunk;
+                        } catch (errChunk) {
+                            Logger.logError("Could not read a Chunk: " + err, this);
+                            reject("Could not read a Chunk.");
+                            return;
+                        }
+                    } while (currentChunk.name != ETCgBIPNGChunkName.IEND); // Stop once we have read the end chunk.
+
+                    resolve(chunks);
+                });
+            }
+        );
     }
 
 }
