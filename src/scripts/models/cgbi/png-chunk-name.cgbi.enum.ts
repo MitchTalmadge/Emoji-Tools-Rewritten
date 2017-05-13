@@ -42,6 +42,7 @@ export enum ETCgBIPNGChunkName {
     iTXt,
     tEXt,
     zTXt,
+    iDOT,
 
         // Un-official
     CgBI

@@ -44,8 +44,7 @@ export class EmojiService {
                 private cmapTableService: cmapTableService,
                 private CBDTTableService: CBDTTableService,
                 private GSUBTableService: GSUBTableService,
-                private sbixTableService: sbixTableService,
-                private CgBIService: CgBIService) {
+                private sbixTableService: sbixTableService) {
     }
 
     /**
@@ -383,7 +382,7 @@ export class EmojiService {
                                 },
                                 () => {
                                     // After extraction, convert from CgBI to RGBA
-                                    this.CgBIService.convertCgBIToRGBA(extractionPath)
+                                    CgBIService.convertCgBIToRGBA(extractionPath)
                                         .subscribe(
                                             progress => {
                                                 // Update progress.

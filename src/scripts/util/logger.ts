@@ -33,7 +33,7 @@ export class Logger {
      * @param origin The object which is calling this method.
      */
     public static logInfo(message: string, origin: Object) {
-        let finalMessage = "[INFO] [" + origin.constructor.name + "] " + message;
+        let finalMessage = "[INFO] [" + (origin ? origin.constructor.name : 'Unknown Origin') + "] " + message;
         log(finalMessage);
         console.log(finalMessage);
     }
@@ -44,7 +44,7 @@ export class Logger {
      * @param origin The object which is calling this method.
      */
     public static logError(message: string, origin: Object) {
-        let finalMessage = "[ERROR] [" + origin.constructor.name + "] " + message;
+        let finalMessage = "[ERROR] [" + (origin ? origin.constructor.name : 'Unknown Origin') + "] " + message;
         log(finalMessage);
         console.error(finalMessage);
     }
