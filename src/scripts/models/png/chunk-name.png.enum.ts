@@ -16,25 +16,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ETCgBIPNGChunkName} from "./png-chunk-name.cgbi.enum";
 /**
- * Represents a single Chunk in a PNG file.
+ * Names for the known chunks in the PNG file.
  */
-export interface ETCgBIPNGChunk {
+export enum ETPNGChunkName {
 
-    /**
-     * The name of the Chunk.
-     */
-    name?: ETCgBIPNGChunkName;
+    // Critical
+    IHDR,
+    PLTE,
+    IDAT,
+    IEND,
 
-    /**
-     * The Chunk's data.
-     */
-    data?: Uint8Array;
+        // Ancillary
+    cHRM,
+    gAMA,
+    iCCP,
+    sBIT,
+    sRGB,
+    bKGD,
+    hIST,
+    tRNS,
+    pHYs,
+    sPLT,
+    tIME,
+    iTXt,
+    tEXt,
+    zTXt,
+    iDOT,
 
-    /**
-     * The Chunk's CRC.
-     */
-    crc?: Uint8Array;
+        // Un-official
+    CgBI
 
 }

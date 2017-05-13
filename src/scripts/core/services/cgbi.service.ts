@@ -21,20 +21,13 @@ import {Observable} from "rxjs/Observable";
 import * as fs from "fs-extra";
 import {Logger} from "../../util/logger";
 import * as path from "path";
-import {ETCgBIPNGChunks} from "../../models/cgbi/png-chunks.cgbi.model";
-import {ETCgBIPNGChunk} from "../../models/cgbi/png-chunk.cgbi.model";
-import {ETCgBIPNGChunkName} from "../../models/cgbi/png-chunk-name.cgbi.enum";
+import {PNGService} from "./png.service";
 
 /**
  * Methods for working with CgBI images, commonly found in iOS Emoji fonts.
  */
 @Injectable()
 export class CgBIService {
-
-    /**
-     * A Buffer that contains the 8 byte header that should be present on all PNG files.
-     */
-    private static readonly PNG_HEADER_BUFFER = new Buffer([137, 80, 78, 71, 13, 10, 26, 10]);
 
     /**
      * Converts CgBI-format PNG images to RGBA.
@@ -65,7 +58,7 @@ export class CgBIService {
                 }
 
                 // Read the Chunks.
-                CgBIService.readChunksFromPNG(path.join(imagesPath, fileName))
+                PNGService.readChunksFromPNG(path.join(imagesPath, fileName))
                     .then(chunks => {
                         Logger.logInfo("Chunks for " + fileName + ": " + JSON.stringify(chunks), CgBIService);
 
@@ -86,112 +79,5 @@ export class CgBIService {
         });
     }
 
-    /**
-     * Reads the Chunks from a PNG file.
-     * @param pngFilePath The path to the PNG.
-     * @returns A Promise that gives the Chunks.
-     */
-    private static readChunksFromPNG(pngFilePath: string): Promise<ETCgBIPNGChunks> {
-        return new Promise<ETCgBIPNGChunks>((resolve, reject) => {
-                // File descriptor
-                let fd: number;
-
-                try {
-                    fd = fs.openSync(pngFilePath, 'r');
-                    // The current position within the file.
-                    let currentPosition = 0;
-
-                    let chunks: ETCgBIPNGChunks = {};
-
-                    // ---- HEADER ---- //
-                    try {
-                        let headerBuffer = new Buffer(8);
-                        fs.readSync(fd, headerBuffer, 0, headerBuffer.length, currentPosition);
-                        currentPosition += headerBuffer.length;
-
-                        // Compare header to expected.
-                        if (headerBuffer.compare(CgBIService.PNG_HEADER_BUFFER) != 0) {
-                            Logger.logError("The provided file is not a valid PNG file; header does not match.", this);
-                            reject("Invalid PNG file.");
-                            return;
-                        }
-                    } catch (errHeader) {
-                        Logger.logError("Could not read PNG file header: " + errHeader, this);
-                        reject("Could not read PNG file header.");
-                        return;
-                    }
-
-                    // Read chunks
-                    let currentChunk: ETCgBIPNGChunk;
-                    do {
-                        currentChunk = {};
-                        try {
-                            // ---- DATA LENGTH ---- //
-                            let chunkLengthBuffer = new Buffer(4);
-                            fs.readSync(fd, chunkLengthBuffer, 0, chunkLengthBuffer.length, currentPosition);
-                            let dataLength = chunkLengthBuffer.readUInt32BE(0);
-                            currentPosition += chunkLengthBuffer.length;
-
-                            // ---- NAME ---- //
-                            let chunkNameBuffer = new Buffer(4);
-                            fs.readSync(fd, chunkNameBuffer, 0, chunkNameBuffer.length, currentPosition);
-                            currentPosition += chunkNameBuffer.length;
-
-                            // Assign the name.
-                            let chunkName = chunkNameBuffer.toString("ASCII");
-                            currentChunk.name = ETCgBIPNGChunkName[chunkName];
-
-                            // Check if the name is known.
-                            if (currentChunk.name == null) {
-                                Logger.logError("Found a Chunk with an un-recognized name: " + chunkName, this);
-                                reject("Un-recognized Chunk found.");
-                                return;
-                            }
-
-                            // ---- DATA ---- //
-                            let chunkDataBuffer = new Buffer(dataLength);
-                            fs.readSync(fd, chunkDataBuffer, 0, chunkDataBuffer.length, currentPosition);
-                            currentPosition += chunkDataBuffer.length;
-
-                            // Assign the data
-                            currentChunk.data = new Uint8Array(chunkDataBuffer);
-
-                            // ---- CRC ---- //
-                            let chunkCRCBuffer = new Buffer(4);
-                            fs.readSync(fd, chunkCRCBuffer, 0, chunkCRCBuffer.length, currentPosition);
-                            currentPosition += chunkCRCBuffer.length;
-
-                            // Assign the CRC
-                            currentChunk.crc = new Uint8Array(chunkCRCBuffer);
-
-                            // ---- CLEAN UP ---- //
-
-                            // Put the chunk into the map.
-                            chunks[chunkName] = currentChunk;
-                        } catch (errChunk) {
-                            Logger.logError("Could not read a Chunk: " + errChunk, this);
-                            reject("Could not read a Chunk.");
-                            return;
-                        }
-                    } while (currentChunk.name != ETCgBIPNGChunkName.IEND); // Stop once we have read the end chunk.
-
-
-                    resolve(chunks);
-                } catch (err) {
-                    Logger.logError("Could not open PNG file for reading: " + err, this);
-                    reject("Could not open PNG file.");
-                    return;
-                } finally {
-                    if (fd) {
-                        fs.close(fd, err => {
-                            if (err) {
-                                Logger.logError("Could not close PNG file: " + err, this);
-                            }
-                        });
-                    }
-                }
-            }
-        );
-    }
 
 }

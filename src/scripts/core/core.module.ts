@@ -26,6 +26,7 @@ import {FontToolsService} from "./services/font-tools.service";
 import {TablesServiceModule} from "./services/tables/tables.module";
 import {ErrorService} from "./services/error.service";
 import {CgBIService} from "./services/cgbi.service";
+import {PNGService} from "./services/png.service";
 
 @NgModule({
     imports: [
@@ -44,6 +45,7 @@ import {CgBIService} from "./services/cgbi.service";
         EmojiService,
         ErrorService,
         FontToolsService,
+        PNGService,
         ProjectService,
         RESTService,
     ],

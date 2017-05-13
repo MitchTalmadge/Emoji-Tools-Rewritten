@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ETCgBIPNGChunk} from "./png-chunk.cgbi.model";
+import {ETPNGChunk} from "./chunk.png.model";
 
 /**
  * Maps PNG Chunks to the string representation of their names.
  */
-export interface ETCgBIPNGChunks {
+export interface ETPNGChunks {
 
-    [chunkName: string]: ETCgBIPNGChunk;
+    [chunkName: string]: ETPNGChunk;
 
 }
