@@ -105,14 +105,10 @@ export class PNGService {
                             currentChunk.data = new Uint8Array(chunkDataBuffer);
 
                             // ---- CRC ---- //
-                            let chunkCRCBuffer = new Buffer(4);
-                            fs.readSync(fd, chunkCRCBuffer, 0, chunkCRCBuffer.length, currentPosition);
-                            currentPosition += chunkCRCBuffer.length;
+                            // We can skip the CRC, it is not useful and will be calculated when writing.
+                            currentPosition += 4;
 
-                            // Assign the CRC
-                            currentChunk.crc = new Uint8Array(chunkCRCBuffer);
-
-                            // ---- CLEAN UP ---- //
+                            // ---- FINISH ---- //
 
                             // Put the chunk into the map.
                             chunks[chunkName] = currentChunk;
@@ -140,6 +136,45 @@ export class PNGService {
                 }
             }
         );
+    }
+
+    /**
+     * Writes Chunks to create a PNG File. CRCs will be re-calculated.
+     * @param pngFilePath Where to write the PNG. Existing files will be overwritten.
+     * @param chunks The chunks to write.
+     */
+    public static writeChunksToPNG(pngFilePath: string, chunks: ETPNGChunks): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            // File descriptor
+            let fd: number;
+
+            try {
+                // w+ means overwrite; the file contents will be cleared upon opening.
+                fd = fs.openSync(pngFilePath, 'w+');
+
+                // The current position within the file.
+                let currentPosition = 0;
+
+                // ---- HEADER ---- //
+                fs.writeSync(fd, PNGService.PNG_HEADER_BUFFER, 0, PNGService.PNG_HEADER_BUFFER.length, 0);
+
+                for(let chunk in chunks) {
+
+                }
+            } catch (err) {
+                Logger.logError("Could not open PNG file for writing: " + err, this);
+                reject("Could not open PNG file.");
+                return;
+            } finally {
+                if (fd) {
+                    fs.close(fd, err => {
+                        if (err) {
+                            Logger.logError("Could not close PNG file: " + err, this);
+                        }
+                    });
+                }
+            }
+        });
     }
 
 }

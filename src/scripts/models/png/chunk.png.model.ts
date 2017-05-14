@@ -32,9 +32,4 @@ export interface ETPNGChunk {
      */
     data?: Uint8Array;
 
-    /**
-     * The Chunk's CRC.
-     */
-    crc?: Uint8Array;
-
 }
