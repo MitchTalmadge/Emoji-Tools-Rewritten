@@ -19,9 +19,9 @@
 import {Injectable} from "@angular/core";
 import * as fs from "fs-extra";
 import {Logger} from "../../util/logger";
-import {ETPNGChunkName} from "../../models/png/chunk-name.png.enum";
 import {ETPNGChunk} from "../../models/png/chunk.png.model";
 import {ETPNGChunks} from "../../models/png/chunks.png.model";
+import * as crc32 from "buffer-crc32";
 
 /**
  * Methods for working with PNG files.
@@ -86,15 +86,7 @@ export class PNGService {
                             currentPosition += chunkNameBuffer.length;
 
                             // Assign the name.
-                            let chunkName = chunkNameBuffer.toString("ASCII");
-                            currentChunk.name = ETPNGChunkName[chunkName];
-
-                            // Check if the name is known.
-                            if (currentChunk.name == null) {
-                                Logger.logError("Found a Chunk with an un-recognized name: " + chunkName, this);
-                                reject("Un-recognized Chunk found.");
-                                return;
-                            }
+                            currentChunk.name = chunkNameBuffer.toString("ASCII");
 
                             // ---- DATA ---- //
                             let chunkDataBuffer = new Buffer(dataLength);
@@ -111,13 +103,13 @@ export class PNGService {
                             // ---- FINISH ---- //
 
                             // Put the chunk into the map.
-                            chunks[chunkName] = currentChunk;
+                            chunks[currentChunk.name] = currentChunk;
                         } catch (errChunk) {
                             Logger.logError("Could not read a Chunk: " + errChunk, this);
                             reject("Could not read a Chunk.");
                             return;
                         }
-                    } while (currentChunk.name != ETPNGChunkName.IEND); // Stop once we have read the end chunk.
+                    } while (currentChunk.name !== "IEND"); // Stop once we have read the end chunk.
 
 
                     resolve(chunks);
@@ -157,10 +149,33 @@ export class PNGService {
 
                 // ---- HEADER ---- //
                 fs.writeSync(fd, PNGService.PNG_HEADER_BUFFER, 0, PNGService.PNG_HEADER_BUFFER.length, 0);
+                currentPosition += PNGService.PNG_HEADER_BUFFER.length;
 
-                for(let chunk in chunks) {
+                for (let chunkName in chunks) {
+                    let chunk = chunks[chunkName];
 
+                    // ---- DATA LENGTH ---- //
+                    let lengthBuffer = new Buffer(4);
+                    lengthBuffer.writeUInt32BE(chunk.data.length, 0);
+                    fs.writeSync(fd, lengthBuffer, 0, lengthBuffer.length, currentPosition);
+                    currentPosition += lengthBuffer.length;
+
+                    // ---- NAME ---- //
+                    fs.writeSync(fd, chunk.name, currentPosition, "ASCII");
+                    currentPosition += chunk.name.length;
+
+                    // ---- DATA ---- //
+                    fs.writeSync(fd, chunk.data, currentPosition);
+                    currentPosition += chunk.data.length;
+
+                    // ---- CRC ---- //
+                    let partialCRC: Buffer = crc32(chunk.name);
+                    partialCRC = crc32(chunk.data, partialCRC);
+                    fs.writeSync(fd, partialCRC, currentPosition);
+                    currentPosition += partialCRC.length;
                 }
+
+                resolve();
             } catch (err) {
                 Logger.logError("Could not open PNG file for writing: " + err, this);
                 reject("Could not open PNG file.");

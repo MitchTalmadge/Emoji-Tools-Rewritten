@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ETPNGChunkName} from "./chunk-name.png.enum";
 /**
  * Represents a single Chunk in a PNG file.
  */
@@ -25,7 +24,7 @@ export interface ETPNGChunk {
     /**
      * The name of the Chunk.
      */
-    name?: ETPNGChunkName;
+    name?: string;
 
     /**
      * The Chunk's data.

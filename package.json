@@ -22,6 +22,7 @@
     "@angular/platform-browser": "^4.1.1",
     "@angular/platform-browser-dynamic": "^4.1.1",
     "@angular/router": "^4.1.1",
+    "buffer-crc32": "^0.2.13",
     "core-js": "^2.4.1",
     "electron": "^1.6.6",
     "electron-is-dev": "^0.1.2",

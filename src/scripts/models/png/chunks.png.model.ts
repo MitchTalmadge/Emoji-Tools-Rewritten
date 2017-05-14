@@ -19,7 +19,7 @@
 import {ETPNGChunk} from "./chunk.png.model";
 
 /**
- * Maps PNG Chunks to the string representation of their names.
+ * Maps PNG Chunks to their names.
  */
 export interface ETPNGChunks {
 
