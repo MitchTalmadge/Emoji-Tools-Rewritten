@@ -21,6 +21,7 @@ import * as fs from "fs-extra";
 import {Logger} from "../../util/logger";
 import {ETPNGChunk} from "../../models/png/chunk.png.model";
 import * as crc32 from "buffer-crc32";
+import {ETPNGDetails} from "../../models/png/details.png.model";
 
 /**
  * Methods for working with PNG files.
@@ -187,6 +188,25 @@ export class PNGService {
                 }
             }
         });
+    }
+
+    /**
+     * From the array of chunks, finds the IHDR chunk and extracts the details about the PNG file.
+     * @param chunks The chunks from the PNG file.
+     * @returns The PNG details.
+     */
+    public static getDetailsFromChunks(chunks: ETPNGChunk[]): ETPNGDetails {
+        let IHDRChunk: ETPNGChunk = chunks.filter(chunk => chunk.name === 'IHDR')[0];
+
+        return {
+            width: IHDRChunk.data.readUInt32BE(0),
+            height: IHDRChunk.data.readUInt32BE(4),
+            bitDepth: IHDRChunk.data.readUInt8(8),
+            colorType: IHDRChunk.data.readUInt8(9),
+            compressionMethod: IHDRChunk.data.readUInt8(10),
+            filterMethod: IHDRChunk.data.readUInt8(11),
+            interlaceMethod: IHDRChunk.data.readUInt8(12),
+        };
     }
 
 }

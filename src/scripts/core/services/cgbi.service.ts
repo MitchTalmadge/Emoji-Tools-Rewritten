@@ -22,6 +22,8 @@ import * as fs from "fs-extra";
 import {Logger} from "../../util/logger";
 import * as path from "path";
 import {PNGService} from "./png.service";
+import {ETPNGChunk} from "../../models/png/chunk.png.model";
+import * as pako from "pako";
 
 /**
  * Methods for working with CgBI images, commonly found in iOS Emoji fonts.
@@ -72,18 +74,59 @@ export class CgBIService {
                             return convertFileAtIndex(index + 1);
                         }
 
-                        // Swap pixels in data chunks
-                        chunks.filter(chunk => chunk.name === 'IDAT').forEach(dataChunk => {
-                            for (let i = 0; i < dataChunk.data.length; i += 4) {
-                                let temp = dataChunk.data[i];
-                                dataChunk.data[i] = dataChunk.data[i + 2];
-                                dataChunk.data[i + 2] = temp;
+                        // The details about the PNG file.
+                        let details = PNGService.getDetailsFromChunks(chunks);
+
+                        // A new chunk to hold the combined IDAT data from all IDAT Chunks.
+                        let combinedIDATChunk: ETPNGChunk = {
+                            name: 'IDAT',
+                            data: new Buffer(0)
+                        };
+
+                        // Combine IDAT Chunks
+                        let seenFirstIDAT = false;
+                        chunks.forEach((chunk, index, array) => {
+                            if (chunk.name === 'IDAT') {
+                                combinedIDATChunk.data = Buffer.concat([combinedIDATChunk.data, chunk.data]);
+
+                                // Check if this is the first IDAT Chunk encountered.
+                                if (!seenFirstIDAT) {
+                                    // Since it is the first, put the new IDAT here after removing this Chunk.
+                                    array.splice(index, 1, combinedIDATChunk);
+                                    seenFirstIDAT = true;
+                                } else {
+                                    // Not the first, so just remove this Chunk.
+                                    array.splice(index, 1);
+                                }
                             }
                         });
+
+                        // Inflate (Uncompress) IDAT Chunk
+                        let rawData = pako.inflateRaw(new Uint8Array(combinedIDATChunk.data));
+
+                        // Swap pixels in combined IDAT Chunk. (CgBI -> RGBA)
+                        let i = 0;
+                        for (let y = 0; y < details.height; y++) {
+                            // Read one byte to skip over the filter type byte.
+                            i++;
+                            for (let x = 0; x < details.width; x++) {
+                                // Swap pixels 0 and 2.
+                                let temp = rawData[i];
+                                rawData[i] = rawData[i + 2];
+                                rawData[i + 2] = temp;
+
+                                // 4 Bytes per x value.
+                                i += 4;
+                            }
+                        }
+
+                        // Deflate (Compress) IDAT Chunk
+                        combinedIDATChunk.data = new Buffer(pako.deflate(rawData));
 
                         // Delete CgBI Chunk
                         delete chunks[CgBIChunkIndex];
 
+                        // Write modified Chunks.
                         PNGService.writeChunksToPNG(path.join(imagesPath, fileName), chunks)
                             .then(() => {
                                 // Update progress
