@@ -145,7 +145,7 @@ export class EmojiService {
                                                 },
                                                 err => {
                                                     Logger.logError("Could not extract emojis: " + err, this);
-                                                    listener.error("Extraction was unsuccessful.");
+                                                    listener.error("Extraction was unsuccessful: " + err);
                                                 },
                                                 () => {
                                                     // Assign the extraction path to the project.
@@ -179,7 +179,7 @@ export class EmojiService {
                                                 },
                                                 err => {
                                                     Logger.logError("Could not extract emojis: " + err, this);
-                                                    listener.error("Extraction was unsuccessful.");
+                                                    listener.error("Extraction was unsuccessful: " + err);
                                                 },
                                                 () => {
                                                     // Assign the extraction path to the project.

@@ -20,7 +20,6 @@ import {Injectable} from "@angular/core";
 import * as fs from "fs-extra";
 import {Logger} from "../../util/logger";
 import {ETPNGChunk} from "../../models/png/chunk.png.model";
-import {ETPNGChunks} from "../../models/png/chunks.png.model";
 import * as crc32 from "buffer-crc32";
 
 /**
@@ -39,8 +38,8 @@ export class PNGService {
      * @param pngFilePath The path to the PNG.
      * @returns A Promise that gives the Chunks.
      */
-    public static readChunksFromPNG(pngFilePath: string): Promise<ETPNGChunks> {
-        return new Promise<ETPNGChunks>((resolve, reject) => {
+    public static readChunksFromPNG(pngFilePath: string): Promise<ETPNGChunk[]> {
+        return new Promise<ETPNGChunk[]>((resolve, reject) => {
                 // File descriptor
                 let fd: number;
 
@@ -49,7 +48,7 @@ export class PNGService {
                     // The current position within the file.
                     let currentPosition = 0;
 
-                    let chunks: ETPNGChunks = {};
+                    let chunks: ETPNGChunk[] = [];
 
                     // ---- HEADER ---- //
                     try {
@@ -94,7 +93,7 @@ export class PNGService {
                             currentPosition += chunkDataBuffer.length;
 
                             // Assign the data
-                            currentChunk.data = new Uint8Array(chunkDataBuffer);
+                            currentChunk.data = chunkDataBuffer;
 
                             // ---- CRC ---- //
                             // We can skip the CRC, it is not useful and will be calculated when writing.
@@ -103,7 +102,7 @@ export class PNGService {
                             // ---- FINISH ---- //
 
                             // Put the chunk into the map.
-                            chunks[currentChunk.name] = currentChunk;
+                            chunks.push(currentChunk);
                         } catch (errChunk) {
                             Logger.logError("Could not read a Chunk: " + errChunk, this);
                             reject("Could not read a Chunk.");
@@ -135,7 +134,7 @@ export class PNGService {
      * @param pngFilePath Where to write the PNG. Existing files will be overwritten.
      * @param chunks The chunks to write.
      */
-    public static writeChunksToPNG(pngFilePath: string, chunks: ETPNGChunks): Promise<void> {
+    public static writeChunksToPNG(pngFilePath: string, chunks: ETPNGChunk[]): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             // File descriptor
             let fd: number;
@@ -151,9 +150,7 @@ export class PNGService {
                 fs.writeSync(fd, PNGService.PNG_HEADER_BUFFER, 0, PNGService.PNG_HEADER_BUFFER.length, 0);
                 currentPosition += PNGService.PNG_HEADER_BUFFER.length;
 
-                for (let chunkName in chunks) {
-                    let chunk = chunks[chunkName];
-
+                chunks.forEach(chunk => {
                     // ---- DATA LENGTH ---- //
                     let lengthBuffer = new Buffer(4);
                     lengthBuffer.writeUInt32BE(chunk.data.length, 0);
@@ -161,19 +158,19 @@ export class PNGService {
                     currentPosition += lengthBuffer.length;
 
                     // ---- NAME ---- //
-                    fs.writeSync(fd, chunk.name, currentPosition, "ASCII");
+                    fs.writeSync(fd, new Buffer(chunk.name), 0, chunk.name.length, currentPosition);
                     currentPosition += chunk.name.length;
 
                     // ---- DATA ---- //
-                    fs.writeSync(fd, chunk.data, currentPosition);
+                    fs.writeSync(fd, chunk.data, 0, chunk.data.length, currentPosition);
                     currentPosition += chunk.data.length;
 
                     // ---- CRC ---- //
-                    let partialCRC: Buffer = crc32(chunk.name);
+                    let partialCRC: Buffer = crc32(new Buffer(chunk.name));
                     partialCRC = crc32(chunk.data, partialCRC);
-                    fs.writeSync(fd, partialCRC, currentPosition);
+                    fs.writeSync(fd, partialCRC, 0, partialCRC.length, currentPosition);
                     currentPosition += partialCRC.length;
-                }
+                });
 
                 resolve();
             } catch (err) {

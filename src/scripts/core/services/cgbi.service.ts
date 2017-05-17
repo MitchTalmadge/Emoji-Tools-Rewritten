@@ -60,24 +60,29 @@ export class CgBIService {
                 // Read the Chunks.
                 PNGService.readChunksFromPNG(path.join(imagesPath, fileName))
                     .then(chunks => {
-                        // Make sure this is really CgBI
-                        if (chunks['CgBI'] == null) {
+                        // Make sure this is really CgBI (by looking for a CgBI chunk)
+                        let CgBIChunkIndex = -1;
+                        if (chunks.filter((chunk, index) => {
+                                if (chunk.name === 'CgBI') {
+                                    CgBIChunkIndex = index;
+                                    return true;
+                                }
+                            }).length != 1) {
                             Logger.logInfo("Found a non-CgBI image while converting. Skipping...", this);
                             return convertFileAtIndex(index + 1);
                         }
 
-                        // Get the data chunk
-                        let dataChunk = chunks['iDAT'];
-
-                        // Swap pixels
-                        for (let i = 0; i < dataChunk.data.length; i += 4) {
-                            let temp = dataChunk.data[i];
-                            dataChunk.data[i] = dataChunk.data[i + 2];
-                            dataChunk.data[i + 2] = temp;
-                        }
+                        // Swap pixels in data chunks
+                        chunks.filter(chunk => chunk.name === 'IDAT').forEach(dataChunk => {
+                            for (let i = 0; i < dataChunk.data.length; i += 4) {
+                                let temp = dataChunk.data[i];
+                                dataChunk.data[i] = dataChunk.data[i + 2];
+                                dataChunk.data[i + 2] = temp;
+                            }
+                        });
 
                         // Delete CgBI Chunk
-                        delete chunks['CgBI'];
+                        delete chunks[CgBIChunkIndex];
 
                         PNGService.writeChunksToPNG(path.join(imagesPath, fileName), chunks)
                             .then(() => {

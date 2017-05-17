@@ -29,6 +29,6 @@ export interface ETPNGChunk {
     /**
      * The Chunk's data.
      */
-    data?: Uint8Array;
+    data?: Buffer;
 
 }
