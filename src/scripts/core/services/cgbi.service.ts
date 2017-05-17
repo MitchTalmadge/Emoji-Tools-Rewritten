@@ -53,20 +53,45 @@ export class CgBIService {
 
                 // Check the file extension
                 if (!fileName.endsWith(".png")) {
-                    Logger.logError("Found a non-png file while converting. Skipping.", this);
+                    Logger.logInfo("Found a non-png file while converting. Skipping.", this);
                     return convertFileAtIndex(index + 1);
                 }
 
                 // Read the Chunks.
                 PNGService.readChunksFromPNG(path.join(imagesPath, fileName))
                     .then(chunks => {
-                        Logger.logInfo("Chunks for " + fileName + ": " + JSON.stringify(chunks), CgBIService);
+                        // Make sure this is really CgBI
+                        if (chunks['CgBI'] == null) {
+                            Logger.logInfo("Found a non-CgBI image while converting. Skipping...", this);
+                            return convertFileAtIndex(index + 1);
+                        }
 
-                        // Update progress
-                        listener.next(((index / fileNames.length) * 100) | 0);
+                        // Get the data chunk
+                        let dataChunk = chunks['iDAT'];
 
-                        // Convert next file.
-                        return convertFileAtIndex(index + 1);
+                        // Swap pixels
+                        for (let i = 0; i < dataChunk.data.length; i += 4) {
+                            let temp = dataChunk.data[i];
+                            dataChunk.data[i] = dataChunk.data[i + 2];
+                            dataChunk.data[i + 2] = temp;
+                        }
+
+                        // Delete CgBI Chunk
+                        delete chunks['CgBI'];
+
+                        PNGService.writeChunksToPNG(path.join(imagesPath, fileName), chunks)
+                            .then(() => {
+                                // Update progress
+                                listener.next(((index / fileNames.length) * 100) | 0);
+
+                                return convertFileAtIndex(index + 1);
+                            })
+                            .catch(err => {
+                                Logger.logError("Could not convert PNG from CgBI; failed while saving chunks: " + err, this);
+                                listener.error("Failed to save a PNG file after CgBI conversion.");
+
+                                return false;
+                            })
                     })
                     .catch(err => {
                         Logger.logError("Could not convert CgBI to RGBA; problem while reading Chunks: " + err, CgBIService);
