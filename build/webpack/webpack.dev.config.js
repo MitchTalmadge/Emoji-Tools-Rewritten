@@ -17,8 +17,6 @@
  */
 
 const config = require('./webpack.common.config.js');
-const AotPlugin = require('@ngtools/webpack').AotPlugin;
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
@@ -31,7 +29,7 @@ config.module.rules.unshift(
 );
 
 config.devServer = {
-    contentBase: path.join(__dirname, "../../tmp"),
+    contentBase: config.output.path,
     historyApiFallback: true,
     compress: true,
     port: 9000
@@ -40,7 +38,7 @@ config.devServer = {
 config.plugins.push(
     new HtmlWebpackPlugin({
         template: path.join(__dirname, '../../src/index.html.ejs'),
-        filename: path.join(__dirname, '../../tmp/index.html'),
+        filename: path.join(config.output.path, 'index.html'),
         inject: 'body',
         minify: {
             minifyCSS: true,
@@ -54,16 +52,7 @@ config.plugins.push(
     })
 );
 
-config.plugins.push(
-    new CleanWebpackPlugin(['tmp'], {root: path.join(__dirname, "../../")})
-);
-
 config.devtool = 'source-map';
-config.output = {
-    path: path.join(__dirname, '../../tmp/'),
-    filename: './resources/scripts/[name].js',
-    sourceMapFilename: './resources/scripts/[name].map',
-    chunkFilename: './resources/scripts/[id].chunk.js'
-};
+config.output.sourceMapFilename = './resources/scripts/[name].map';
 
 module.exports = config;

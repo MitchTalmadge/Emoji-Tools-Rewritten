@@ -92,6 +92,12 @@ const config = {
         setImmediate: false,
         clearTimeout: true,
         setTimeout: true
+    },
+
+    output: {
+        path: path.join(__dirname, '../../tmp/prod/assets/'),
+        filename: './resources/scripts/[name]-[chunkhash].js',
+        chunkFilename: './resources/scripts/[id].chunk.js'
     }
 };
 
