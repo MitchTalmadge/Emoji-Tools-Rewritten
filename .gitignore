@@ -17,6 +17,7 @@ fabric.properties
 
 /node_modules/
 /npm-debug.log
+package-lock.json
 /build/prod/assets
 /build/dev/
 /build/bin
