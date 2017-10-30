@@ -23,6 +23,8 @@ import {AlertComponent} from "../../../shared/alert/alert.component";
 import {Subscription} from "rxjs/Subscription";
 import {ETEmoji} from "../../../models/emoji.model";
 import {Logger} from "../../../util/logger";
+import {ProjectPathService} from "../../../core/services/project-path.service";
+import * as fs from "fs-extra";
 
 @Component({
     selector: 'et-project-emoji-pane',
@@ -81,7 +83,7 @@ export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
      * Loads the array of Emojis into the emojis field if they have been extracted.
      */
     loadEmojis() {
-        if (this.project != null && this.project.extractionPath != null) {
+        if (this.project != null && this.projectHasBeenExtracted()) {
             this.emojiService.getExtractedEmojis(this.project).then(
                 emojis => this.emojis = emojis,
                 err => {
@@ -95,7 +97,7 @@ export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
      * When the Extract Emojis button is clicked.
      */
     onExtractEmojis() {
-        if (this.project != null && this.project.extractionPath == null) {
+        if (this.project != null && !this.projectHasBeenExtracted()) {
             this.extracting.emit(true);
             this.extractionSubscription = this.emojiService.extractEmojis(this.project)
                 .subscribe(
@@ -120,6 +122,14 @@ export class ProjectEmojiPaneComponent implements OnInit, OnDestroy {
      */
     isExtracting() {
         return this.extractionSubscription != null && !this.extractionSubscription.closed;
+    }
+
+    /**
+     * Determines if the current project has been extracted before.
+     * @returns True if extraction has already taken place.
+     */
+    projectHasBeenExtracted() {
+        return ProjectPathService.extractionDirectoryExists(this.project);
     }
 
 }

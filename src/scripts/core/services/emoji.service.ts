@@ -34,6 +34,7 @@ import {ETEmoji} from "../../models/emoji.model";
 import {DomSanitizer} from "@angular/platform-browser";
 import {sbixTableService} from "./tables/sbix.table.service";
 import {CgBIService} from "./cgbi.service";
+import {ProjectPathService} from "./project-path.service";
 
 @Injectable()
 export class EmojiService {
@@ -55,13 +56,14 @@ export class EmojiService {
      */
     public getExtractedEmojis(project: ETProject): Promise<ETEmoji[]> {
         return new Promise((resolve, reject) => {
-            if (project.extractionPath == null || !fs.existsSync(project.extractionPath)) {
+            if (!ProjectPathService.extractionDirectoryExists(project)) {
                 reject("Cannot get extracted Emojis; Emojis have not yet been extracted.");
                 return;
             }
 
             // Get an array of the files from the extraction path.
-            let emojiFiles = fs.readdirSync(project.extractionPath);
+            let extractionPath = ProjectPathService.extractionDirectoryPath(project);
+            let emojiFiles = fs.readdirSync(extractionPath);
             let emojis: ETEmoji[] = [];
 
             // For each file
@@ -75,7 +77,7 @@ export class EmojiService {
                 let emoji: ETEmoji = {};
 
                 // Assign the Emoji path
-                emoji.imagePath = path.join(project.extractionPath, fileName);
+                emoji.imagePath = path.join(extractionPath, fileName);
 
                 // Assign the SafeUrl Emoji path for Angular.
                 emoji.imgSrcPath = this.domSanitizer.bypassSecurityTrustUrl(emoji.imagePath);
@@ -148,12 +150,6 @@ export class EmojiService {
                                                     listener.error("Extraction was unsuccessful: " + err);
                                                 },
                                                 () => {
-                                                    // Assign the extraction path to the project.
-                                                    project.extractionPath = extractionPath;
-
-                                                    // Assign the ttx dir path to the project.
-                                                    project.ttxDirPath = ttxDirPath;
-
                                                     // Save the project.
                                                     this.projectService.saveProject(project)
                                                         .subscribe(
@@ -182,12 +178,6 @@ export class EmojiService {
                                                     listener.error("Extraction was unsuccessful: " + err);
                                                 },
                                                 () => {
-                                                    // Assign the extraction path to the project.
-                                                    project.extractionPath = extractionPath;
-
-                                                    // Assign the ttx dir path to the project.
-                                                    project.ttxDirPath = ttxDirPath;
-
                                                     // Save the project.
                                                     this.projectService.saveProject(project)
                                                         .subscribe(

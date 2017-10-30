@@ -44,17 +44,6 @@ export interface ETProject {
     fontType?: ETFontType
 
     /**
-     * The path to the project's ttx directory, containing the individual ttx table files.
-     */
-    ttxDirPath?: string
-
-    /**
-     * The path to the extracted Emojis directory within the project's data directory.
-     * May be null if the Emojis have not been extracted.
-     */
-    extractionPath?: string
-
-    /**
      * The last time this project was modified.
      * Can be formatted as a moment.
      */
