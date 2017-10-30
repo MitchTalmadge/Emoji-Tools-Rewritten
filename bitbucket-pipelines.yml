@@ -1,9 +1,0 @@
-# Guides at https://confluence.atlassian.com/x/14UWN for more examples.
-
-image: node:6.9.4
-pipelines:
-  default:
-    - step:
-        script:
-          - npm install
-          - npm run build
